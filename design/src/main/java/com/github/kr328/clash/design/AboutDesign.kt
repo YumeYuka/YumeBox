@@ -13,7 +13,6 @@ class AboutDesign(
         data class OpenUrl(val url: String) : Request()
         object Back : Request()
     }
-
     @Composable
     override fun Content() {
         AboutScreen(

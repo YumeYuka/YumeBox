@@ -31,11 +31,15 @@ fun AppSettingsScreen(design: AppSettingsDesign) {
     }
     var hideIcon by remember { mutableStateOf(design.uiStore.hideAppIcon) }
     var showTraffic by remember { mutableStateOf(design.srvStore.dynamicNotification) }
+    var bottomBarFloating by remember { mutableStateOf(design.uiStore.bottomBarFloating) }
+    var bottomBarShowDivider by remember { mutableStateOf(design.uiStore.bottomBarShowDivider) }
 
     // 保证外部状态变更时UI能及时同步
     LaunchedEffect(design.behavior.autoRestart) { autoRestart = design.behavior.autoRestart }
     LaunchedEffect(design.uiStore.hideAppIcon) { hideIcon = design.uiStore.hideAppIcon }
     LaunchedEffect(design.srvStore.dynamicNotification) { showTraffic = design.srvStore.dynamicNotification }
+    LaunchedEffect(design.uiStore.bottomBarFloating) { bottomBarFloating = design.uiStore.bottomBarFloating }
+    LaunchedEffect(design.uiStore.bottomBarShowDivider) { bottomBarShowDivider = design.uiStore.bottomBarShowDivider }
 
     StandardListScreen(
         title = MLang.app_settings_page_title,
@@ -94,6 +98,24 @@ fun AppSettingsScreen(design: AppSettingsDesign) {
                             hideIcon = it
                             design.uiStore.hideAppIcon = it
                             design.onHideIconChange(it)
+                        }
+                    )
+                    SuperSwitch(
+                        title = "浮动式底栏",
+                        summary = "使用浮动式底部导航栏",
+                        checked = bottomBarFloating,
+                        onCheckedChange = {
+                            bottomBarFloating = it
+                            design.uiStore.bottomBarFloating = it
+                        }
+                    )
+                    SuperSwitch(
+                        title = "显示分隔线",
+                        summary = "在底部导航栏显示分隔线",
+                        checked = bottomBarShowDivider,
+                        onCheckedChange = {
+                            bottomBarShowDivider = it
+                            design.uiStore.bottomBarShowDivider = it
                         }
                     )
                 }

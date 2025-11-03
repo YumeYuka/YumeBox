@@ -24,7 +24,7 @@ class ProfilesDesign(context: Context) : Design<ProfilesDesign.Request>(context)
 
     internal var profiles by mutableStateOf<List<Profile>>(emptyList())
     internal var allUpdating by mutableStateOf(false)
-    internal var selectedUUID by mutableStateOf<UUID?>(null)
+    var selectedUUID by mutableStateOf<UUID?>(null)
 
     internal var modeIndex by mutableStateOf(0)
 

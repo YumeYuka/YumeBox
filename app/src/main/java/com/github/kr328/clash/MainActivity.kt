@@ -12,29 +12,32 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.github.kr328.clash.common.util.intent
+import com.github.kr328.clash.common.util.setUUID
 import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.core.Clash
 import com.github.kr328.clash.core.bridge.Bridge
 import com.github.kr328.clash.core.model.Proxy
-import com.github.kr328.clash.design.MainDesign
-import com.github.kr328.clash.design.ProxyDesign
+import com.github.kr328.clash.design.*
 import com.github.kr328.clash.design.R
-import com.github.kr328.clash.design.SettingsDesign
+import com.github.kr328.clash.design.components.AppPreferences
+import com.github.kr328.clash.design.components.BottomBar
 import com.github.kr328.clash.design.model.ProxyState
 import com.github.kr328.clash.design.screen.MainScreen
+import com.github.kr328.clash.design.screen.ProfilesScreen
 import com.github.kr328.clash.design.screen.ProxyScreen
 import com.github.kr328.clash.design.screen.SettingsScreen
 import com.github.kr328.clash.design.theme.YumeTheme
 import com.github.kr328.clash.design.ui.ToastDuration
+import com.github.kr328.clash.design.ui.icon.Icons
+import com.github.kr328.clash.design.ui.icon.icons.`Arrow-down-up`
+import com.github.kr328.clash.design.ui.icon.icons.Bolt
+import com.github.kr328.clash.design.ui.icon.icons.House
+import com.github.kr328.clash.design.ui.icon.icons.`Package-check`
 import com.github.kr328.clash.remote.Broadcasts
 import com.github.kr328.clash.remote.Remote
 import com.github.kr328.clash.util.startClashService
@@ -46,14 +49,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBar
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBarMode
 import top.yukonga.miuix.kmp.basic.NavigationItem
 import top.yukonga.miuix.kmp.basic.Scaffold
-import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.useful.More
-import top.yukonga.miuix.kmp.icon.icons.useful.NavigatorSwitch
-import top.yukonga.miuix.kmp.icon.icons.useful.Settings
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
@@ -69,11 +66,15 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
 
     private var design: MainDesign? = null
     private var proxyDesignInstance: ProxyDesign? = null
+    private var profilesDesignInstance: ProfilesDesign? = null
 
     private lateinit var startForResultLauncher: ActivityResultLauncher<Intent>
     private var startForResultContinuation: CancellableContinuation<ActivityResult>? = null
 
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
+
+    private var lastProxyInfoUpdate = 0L
+    private val proxyInfoUpdateDebounce = 50L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,8 +88,7 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
             requestPermissionLauncher =
                 registerForActivityResult(ActivityResultContracts.RequestPermission()) { _: Boolean -> }
             if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    this, Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissionLauncher?.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -159,6 +159,25 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
         events.trySend(Event.ProfileLoaded)
     }
 
+    private suspend fun updateProxyGroupData(
+        idx: Int,
+        groupName: String,
+        proxyStates: List<ProxyState>,
+        proxyDesign: ProxyDesign
+    ) {
+        val group = withClash { queryProxyGroup(groupName, uiStore.proxySort) }
+        val st = proxyStates.getOrNull(idx) ?: return
+        st.now = group.now
+
+        val currentDelays = group.proxies.associate { it.name to it.delay }
+        proxyDesign.updateProxyDelaysRealtime(idx, currentDelays)
+
+        val proxyLinks = group.proxies.associate {
+            it.name to ProxyState(it.name, it.name, it.delay)
+        }
+        proxyDesign.updateGroup(idx, group.proxies, group.type == Proxy.Type.Selector, st, proxyLinks)
+    }
+
     private suspend fun mainLoop() {
         var mode = withClash { queryOverride(Clash.OverrideSlot.Session).mode }
         var groupNames = withClash { queryProxyGroupNames(uiStore.proxyExcludeNotSelectable) }
@@ -166,13 +185,11 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
         var unorderedStates = groupNames.indices.associate { groupNames[it] to proxyStates[it] }.toMutableMap()
         val reloadLock = Semaphore(8)
 
-        val proxyDesign = ProxyDesign(
-            this,
-            mode,
-            groupNames,
-            uiStore
-        )
+        val proxyDesign = ProxyDesign(this, mode, groupNames, uiStore)
         proxyDesignInstance = proxyDesign
+
+        val profilesDesign = ProfilesDesign(this)
+        profilesDesignInstance = profilesDesign
 
         fun rebuildGroups(newNames: List<String>) {
             groupNames = newNames
@@ -197,34 +214,9 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                             freshNames.mapIndexed { idx, name ->
                                 async {
                                     try {
-                                        val group = semaphore.withPermit {
-                                            withClash {
-                                                queryProxyGroup(
-                                                    name,
-                                                    uiStore.proxySort
-                                                )
-                                            }
+                                        semaphore.withPermit {
+                                            updateProxyGroupData(idx, name, proxyStates, proxyDesign)
                                         }
-                                        val st = proxyStates.getOrNull(idx) ?: return@async
-                                        st.now = group.now
-
-                                        val currentDelays = group.proxies.associate { proxy ->
-                                            proxy.name to proxy.delay
-                                        }
-
-                                        proxyDesign.updateProxyDelaysRealtime(idx, currentDelays)
-
-                                        val proxyLinks = group.proxies.associate { proxy ->
-                                            proxy.name to ProxyState(proxy.name, proxy.name, proxy.delay)
-                                        }
-
-                                        proxyDesign.updateGroup(
-                                            idx,
-                                            group.proxies,
-                                            group.type == Proxy.Type.Selector,
-                                            st,
-                                            proxyLinks
-                                        )
                                     } catch (_: Throwable) {
                                     }
                                 }
@@ -242,54 +234,43 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
 
         val mainDesign = MainDesign(this, proxyDesign)
         design = mainDesign
+
+        AppPreferences.init(uiStore)
+
         withContext(Dispatchers.Main) {
             setContent {
                 YumeTheme {
-                    val context = LocalContext.current
-                    val lifecycleOwner = LocalLifecycleOwner.current
-
-                    DisposableEffect(lifecycleOwner) {
-                        val observer = LifecycleEventObserver { _, event ->
-                            when (event) {
-                                Lifecycle.Event.ON_RESUME -> {
-
-                                }
-
-                                Lifecycle.Event.ON_PAUSE -> {
-
-                                }
-
-                                else -> {}
-                            }
-                        }
-                        lifecycleOwner.lifecycle.addObserver(observer)
-                        onDispose {
-                            lifecycleOwner.lifecycle.removeObserver(observer)
-                        }
-                    }
-
                     val items = listOf(
-                        NavigationItem("首页", MiuixIcons.Useful.NavigatorSwitch),
-                        NavigationItem("节点", MiuixIcons.Useful.More),
-                        NavigationItem("设置", MiuixIcons.Useful.Settings)
+                        NavigationItem("首页", Icons.House),
+                        NavigationItem("节点", Icons.`Arrow-down-up`),
+                        NavigationItem("配置", Icons.`Package-check`),
+                        NavigationItem("设置", Icons.Bolt)
                     )
                     val pagerState = rememberPagerState(initialPage = 0, pageCount = { items.size })
                     val scope = rememberCoroutineScope()
 
+                    var showDivider by remember { mutableStateOf(uiStore.bottomBarShowDivider) }
+                    var useFloating by remember { mutableStateOf(uiStore.bottomBarFloating) }
+
+                    LaunchedEffect(Unit) {
+                        while (isActive) {
+                            delay(100)
+                            showDivider = uiStore.bottomBarShowDivider
+                            useFloating = uiStore.bottomBarFloating
+                        }
+                    }
+
                     Scaffold(
                         bottomBar = {
-                            FloatingNavigationBar(
+                            BottomBar(
+                                showDivider = showDivider,
+                                useFloating = useFloating,
                                 items = items,
                                 selected = pagerState.currentPage,
-                                onClick = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
-                                mode = FloatingNavigationBarMode.IconOnly
-                            )
-                        }
-                    ) { paddingValues ->
+                                onPageChange = { index -> scope.launch { pagerState.animateScrollToPage(index) } })
+                        }) { paddingValues ->
                         HorizontalPager(
-                            state = pagerState,
-                            beyondViewportPageCount = 0,
-                            userScrollEnabled = false
+                            state = pagerState, beyondViewportPageCount = 0, userScrollEnabled = false
                         ) { page ->
                             when (page) {
                                 0 -> MainScreen(
@@ -303,39 +284,37 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                                     currentProxySubtitle = mainDesign.currentProxySubtitle.value,
                                     currentDelay = mainDesign.currentDelay.value,
                                     isToggling = mainDesign.toggleInProgress.value,
-                                    onRequest = { mainDesign.request(it) }
-                                )
+                                    onRequest = { mainDesign.request(it) })
 
                                 1 -> ProxyScreen(proxyDesign, mainDesign.clashRunning.value)
-                                2 -> SettingsScreen(
-                                    onMainRequest = { req ->
-                                        when (req) {
-                                            MainDesign.Request.OpenProfiles -> mainDesign.request(req)
-                                            MainDesign.Request.OpenProviders -> mainDesign.request(req)
-                                            MainDesign.Request.OpenLogs -> mainDesign.request(req)
-                                            MainDesign.Request.OpenAbout -> mainDesign.request(req)
-                                            else -> Unit
-                                        }
-                                    },
-                                    onSettingsRequest = { req ->
-                                        when (req) {
-                                            SettingsDesign.Request.StartApp -> startActivity(AppSettingsActivity::class.intent)
-                                            SettingsDesign.Request.StartNetwork -> startActivity(NetworkSettingsActivity::class.intent)
-                                            SettingsDesign.Request.StartOverride -> startActivity(
-                                                OverrideSettingsActivity::class.intent
-                                            )
-
-                                            SettingsDesign.Request.StartMetaFeature -> startActivity(
-                                                MetaFeatureSettingsActivity::class.intent
-                                            )
-                                        }
+                                2 -> ProfilesScreen(profilesDesign)
+                                3 -> SettingsScreen(onMainRequest = { req ->
+                                    when (req) {
+                                        MainDesign.Request.OpenProfiles -> mainDesign.request(req)
+                                        MainDesign.Request.OpenProviders -> mainDesign.request(req)
+                                        MainDesign.Request.OpenLogs -> mainDesign.request(req)
+                                        MainDesign.Request.OpenAbout -> mainDesign.request(req)
+                                        else -> Unit
                                     }
-                                )
+                                }, onSettingsRequest = { req ->
+                                    when (req) {
+                                        SettingsDesign.Request.StartApp -> startActivity(AppSettingsActivity::class.intent)
+                                        SettingsDesign.Request.StartNetwork -> startActivity(NetworkSettingsActivity::class.intent)
+                                        SettingsDesign.Request.StartOverride -> startActivity(
+                                            OverrideSettingsActivity::class.intent
+                                        )
+
+                                        SettingsDesign.Request.StartMetaFeature -> startActivity(
+                                            MetaFeatureSettingsActivity::class.intent
+                                        )
+                                    }
+                                })
                             }
                         }
                         LaunchedEffect(pagerState.currentPage) {
-                            if (pagerState.currentPage == 1) {
-                                triggerPrefetchIfNeeded("enter_proxy_tab")
+                            when (pagerState.currentPage) {
+                                1 -> triggerPrefetchIfNeeded("enter_proxy_tab")
+                                2 -> launch { fetchProfiles(profilesDesign) }
                             }
                         }
                     }
@@ -343,6 +322,8 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
             }
         }
         mainDesign.fetch()
+
+        fetchProfiles(profilesDesign)
 
         proxyDesign.requests.trySend(ProxyDesign.Request.ReloadAll)
         triggerPrefetchIfNeeded("initial")
@@ -353,10 +334,7 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
             select<Unit> {
                 events.onReceive { ev ->
                     when (ev) {
-                        Event.ActivityStart,
-                        Event.ServiceRecreated,
-                        Event.ClashStop, Event.ClashStart,
-                        Event.ProfileLoaded, Event.ProfileChanged -> {
+                        Event.ActivityStart, Event.ServiceRecreated, Event.ClashStop, Event.ClashStart, Event.ProfileLoaded, Event.ProfileChanged -> {
                             mainDesign.fetch()
                             val newNames = withClash { queryProxyGroupNames(uiStore.proxyExcludeNotSelectable) }
                             if (newNames != groupNames) {
@@ -366,6 +344,7 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                             if (ev == Event.ClashStart || ev == Event.ProfileLoaded) {
                                 triggerPrefetchIfNeeded(ev.name)
                             }
+                            launch { fetchProfiles(profilesDesign) }
                         }
 
                         Event.ActivityResume -> {
@@ -375,14 +354,6 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                             }
                         }
 
-                        Event.ActivityPause -> {
-
-                        }
-
-                        Event.ActivityStop -> {
-
-                        }
-
                         else -> Unit
                     }
                 }
@@ -390,10 +361,8 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                     when (req) {
                         MainDesign.Request.ToggleStatus -> {
                             if (mainDesign.toggleInProgress.value) return@onReceive
-                            if (clashRunning)
-                                stopClashService()
-                            else
-                                launch { mainDesign.startClash() }
+                            if (clashRunning) stopClashService()
+                            else launch { mainDesign.startClash() }
                         }
 
                         MainDesign.Request.OpenProxy -> {}
@@ -428,35 +397,11 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                             if (idx !in groupNames.indices) return@onReceive
                             launch {
                                 val groupName = groupNames.getOrNull(idx) ?: return@launch
-                                val group = reloadLock.withPermit {
-                                    withClash {
-                                        queryProxyGroup(
-                                            groupName,
-                                            uiStore.proxySort
-                                        )
+                                reloadLock.withPermit {
+                                    if (groupNames.getOrNull(idx) == groupName) {
+                                        updateProxyGroupData(idx, groupName, proxyStates, proxyDesign)
                                     }
                                 }
-                                if (groupNames.getOrNull(idx) != groupName) return@launch
-                                val st = proxyStates.getOrNull(idx) ?: return@launch
-                                st.now = group.now
-
-                                val currentDelays = group.proxies.associate { proxy ->
-                                    proxy.name to proxy.delay
-                                }
-
-                                proxyDesign.updateProxyDelaysRealtime(idx, currentDelays)
-
-                                val proxyLinks = group.proxies.associate { proxy ->
-                                    proxy.name to ProxyState(proxy.name, proxy.name, proxy.delay)
-                                }
-
-                                proxyDesign.updateGroup(
-                                    idx,
-                                    group.proxies,
-                                    group.type == Proxy.Type.Selector,
-                                    st,
-                                    proxyLinks
-                                )
                             }
                         }
 
@@ -468,10 +413,7 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                                 proxyStates.getOrNull(idx)?.now = r.name
                             }
 
-                            launch {
-                                kotlinx.coroutines.delay(100)
-                                mainDesign.updateCurrentProxyInfo()
-                            }
+                            mainDesign.updateCurrentProxyInfoDebounced()
 
                             launch {
                                 val selectedGroup = withClash {
@@ -510,6 +452,70 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
                         }
                     }
                 }
+                profilesDesign.requests.onReceive { request: ProfilesDesign.Request ->
+                    when (request) {
+                        ProfilesDesign.Request.Create -> {
+                            startActivity(NewProfileActivity::class.intent)
+                        }
+
+                        is ProfilesDesign.Request.Active -> {
+                            withProfile {
+                                setActive(request.profile)
+                                profilesDesign.selectedUUID = request.profile.uuid
+                            }
+                            launch {
+                                delay(100)
+                                fetchProfiles(profilesDesign)
+                            }
+                        }
+
+                        is ProfilesDesign.Request.Edit -> {
+                            startActivity(NewProfileActivity::class.intent.setUUID(request.profile.uuid))
+                        }
+
+                        is ProfilesDesign.Request.Update -> {
+                            launch {
+                                withProfile { update(request.profile.uuid) }
+                                delay(200)
+                                fetchProfiles(profilesDesign)
+                            }
+                        }
+
+                        ProfilesDesign.Request.UpdateAll -> {
+                            launch {
+                                val profiles =
+                                    withProfile { queryAll() }.filter { it.imported && it.type != com.github.kr328.clash.service.model.Profile.Type.File }
+
+                                profiles.forEach { profile ->
+                                    try {
+                                        withProfile { update(profile.uuid) }
+                                    } catch (e: Exception) {
+                                        // ignore
+                                    }
+                                }
+
+                                profilesDesign.finishUpdateAll()
+                                fetchProfiles(profilesDesign)
+                            }
+                        }
+
+                        is ProfilesDesign.Request.Duplicate -> {
+                            launch {
+                                withProfile { duplicate(request.profile.uuid) }
+                                delay(100)
+                                fetchProfiles(profilesDesign)
+                            }
+                        }
+
+                        is ProfilesDesign.Request.Delete -> {
+                            launch {
+                                withProfile { delete(request.profile.uuid) }
+                                delay(100)
+                                fetchProfiles(profilesDesign)
+                            }
+                        }
+                    }
+                }
                 if (clashRunning && activityResumed) {
                     ticker.onReceive {
                         launch { mainDesign.fetchTraffic() }
@@ -530,9 +536,15 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
         this.updateCurrentProxyInfo()
     }
 
+    private suspend fun fetchProfiles(design: ProfilesDesign) {
+        val profiles = withProfile { queryAll() }
+        val active = withProfile { queryActive() }
+        design.patchProfiles(profiles)
+        design.selectedUUID = active?.uuid
+    }
+
     private suspend fun findEndpointProxy(
-        groupName: String,
-        visitedGroups: MutableSet<String> = mutableSetOf()
+        groupName: String, visitedGroups: MutableSet<String> = mutableSetOf()
     ): Triple<String, String?, Int>? {
         if (groupName in visitedGroups) return null
         visitedGroups.add(groupName)
@@ -577,31 +589,40 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
     private suspend fun MainDesign.updateCurrentProxyInfo() {
         try {
             val groupNames = withClash { queryProxyGroupNames(false) }
-            if (groupNames.isNotEmpty()) {
-                val firstGroupName = groupNames[0]
-                val endpointInfo = findEndpointProxy(firstGroupName)
+            if (groupNames.isEmpty()) return
 
-                if (endpointInfo != null) {
-                    val (proxyName, subtitle, delay) = endpointInfo
+            val firstGroupName = groupNames[0]
+            val endpointInfo = findEndpointProxy(firstGroupName)
 
-                    withContext(Dispatchers.Main) {
-                        currentProxy.value = proxyName
-                        currentProxySubtitle.value = subtitle
-                        currentDelay.value = delay.takeIf { it > 0 }
-                    }
-                } else {
-                    val firstGroup = withClash { queryProxyGroup(firstGroupName, uiStore.proxySort) }
-                    val currentProxyName = firstGroup.now
-                    val currentProxyData = firstGroup.proxies.find { it.name == currentProxyName }
+            if (endpointInfo != null) {
+                val (proxyName, subtitle, delay) = endpointInfo
+                withContext(Dispatchers.Main) {
+                    currentProxy.value = proxyName
+                    currentProxySubtitle.value = subtitle
+                    currentDelay.value = delay.takeIf { it > 0 }
+                }
+            } else {
+                val firstGroup = withClash { queryProxyGroup(firstGroupName, uiStore.proxySort) }
+                val currentProxyName = firstGroup.now
+                val currentProxyData = firstGroup.proxies.find { it.name == currentProxyName }
 
-                    withContext(Dispatchers.Main) {
-                        currentProxy.value = currentProxyName
-                        currentProxySubtitle.value = currentProxyData?.subtitle
-                        currentDelay.value = currentProxyData?.delay?.takeIf { it > 0 }
-                    }
+                withContext(Dispatchers.Main) {
+                    currentProxy.value = currentProxyName
+                    currentProxySubtitle.value = currentProxyData?.subtitle
+                    currentDelay.value = currentProxyData?.delay?.takeIf { it > 0 }
                 }
             }
         } catch (e: Exception) {
+        }
+    }
+
+    private fun MainDesign.updateCurrentProxyInfoDebounced() {
+        val now = System.currentTimeMillis()
+        if (now - lastProxyInfoUpdate < proxyInfoUpdateDebounce) return
+        lastProxyInfoUpdate = now
+        launch {
+            delay(100)
+            updateCurrentProxyInfo()
         }
     }
 
@@ -636,26 +657,15 @@ class MainActivity : ComponentActivity(), Broadcasts.Observer, CoroutineScope by
         packageManager.getPackageInfo(packageName, 0).versionName + "\n" + Bridge.nativeCoreVersion().replace("_", "-")
     }
 
-    private suspend fun awaitActivityResult(intent: Intent): ActivityResult =
-        suspendCancellableCoroutine { cont ->
-            startForResultContinuation = cont
-            cont.invokeOnCancellation {
-                startForResultContinuation = null
-            }
-            startForResultLauncher.launch(intent)
+    private suspend fun awaitActivityResult(intent: Intent): ActivityResult = suspendCancellableCoroutine { cont ->
+        startForResultContinuation = cont
+        cont.invokeOnCancellation {
+            startForResultContinuation = null
         }
+        startForResultLauncher.launch(intent)
+    }
 
     private enum class Event {
-        ServiceRecreated,
-        ActivityStart,
-        ActivityStop,
-        ActivityResume,
-        ActivityPause,
-        ClashStop,
-        ClashStart,
-        ProfileLoaded,
-        ProfileChanged,
-        ProfileUpdateCompleted,
-        ProfileUpdateFailed,
+        ServiceRecreated, ActivityStart, ActivityStop, ActivityResume, ActivityPause, ClashStop, ClashStart, ProfileLoaded, ProfileChanged, ProfileUpdateCompleted, ProfileUpdateFailed,
     }
 }

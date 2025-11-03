@@ -9,3 +9,7 @@ UI ,让它看起来更符合现代审美
 >
 > 说人话：[Clash.Meta For Android](https://github.com/MetaCubeX/ClashMetaForAndroid) 的换皮版本
 
+## TODO
+
+-[ ] 将 config 页移动到 navbar
+-[ ] 调整 navbar 样式

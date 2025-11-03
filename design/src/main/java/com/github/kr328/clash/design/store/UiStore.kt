@@ -23,7 +23,7 @@ class UiStore(context: Context) {
     var darkMode: DarkMode by store.enum(
         key = "dark_mode",
         defaultValue = DarkMode.Auto,
-        values = DarkMode.values()
+        values = DarkMode.entries.toTypedArray()
     )
 
     var hideAppIcon: Boolean by store.boolean(
@@ -44,7 +44,7 @@ class UiStore(context: Context) {
     var proxySort: ProxySort by store.enum(
         key = "proxy_sort",
         defaultValue = ProxySort.Default,
-        values = ProxySort.values()
+        values = ProxySort.entries.toTypedArray()
     )
 
     var proxyLastGroup: String by store.string(
@@ -65,7 +65,7 @@ class UiStore(context: Context) {
     var accessControlSort: AppInfoSort by store.enum(
         key = "access_control_sort",
         defaultValue = AppInfoSort.Label,
-        values = AppInfoSort.values(),
+        values = AppInfoSort.entries.toTypedArray(),
     )
 
     var accessControlReverse: Boolean by store.boolean(
@@ -76,6 +76,16 @@ class UiStore(context: Context) {
     var accessControlSystemApp: Boolean by store.boolean(
         key = "access_control_system_app",
         defaultValue = false,
+    )
+
+    var bottomBarShowDivider: Boolean by store.boolean(
+        key = "bottom_bar_show_divider",
+        defaultValue = false
+    )
+
+    var bottomBarFloating: Boolean by store.boolean(
+        key = "bottom_bar_floating",
+        defaultValue = false
     )
 
     companion object {
