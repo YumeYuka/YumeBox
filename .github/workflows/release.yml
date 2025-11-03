@@ -37,23 +37,19 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Set up JDK 24
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'oracle'
-          java-version: '24'
+          distribution: 'temurin'
+          java-version: '21'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-disabled: true
-          add-job-summary: never
 
-      - name: Set up Go
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-          cache: false
 
       - name: Cache Go modules
         uses: actions/cache@v4
@@ -64,6 +60,12 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - name: Update CA certificates
+        run: |
+          sudo apt-get update && sudo apt-get install ca-certificates
+          sudo update-ca-certificates
+          cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -98,33 +100,25 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Decode keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
-
       - name: Create signing.properties
         env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          cat > signing.properties << EOF
-          keystore.path=release.keystore
-          keystore.password=$KEYSTORE_PASSWORD
-          key.alias=$KEY_ALIAS
-          key.password=$KEY_PASSWORD
-          EOF
+          touch signing.properties
+          echo keystore.path=release.keystore > signing.properties
+          echo keystore.password="$SIGNING_STORE_PASSWORD" >> signing.properties
+          echo key.alias="$SIGNING_KEY_ALIAS" >> signing.properties
+          echo key.password="$SIGNING_KEY_PASSWORD" >> signing.properties
+          echo "=== signing.properties ==="
+          cat signing.properties
 
       - name: Build Alpha APK
         run: |
-          ./gradlew assembleAlphaRelease \
+          ./gradlew --no-daemon app:assembleAlphaRelease \
             -PversionName=${{ steps.version.outputs.VERSION }} \
-            -PversionCode=${{ steps.version.outputs.VERSION_CODE }} \
-            --no-daemon \
-            --no-configuration-cache \
-            --stacktrace
+            -PversionCode=${{ steps.version.outputs.VERSION_CODE }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -135,7 +129,7 @@ jobs:
 
       - name: Cleanup secrets
         if: always()
-        run: rm -f release.keystore signing.properties
+        run: rm -f signing.properties
 
   release:
     name: Create Release
