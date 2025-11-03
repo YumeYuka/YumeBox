@@ -1,0 +1,159 @@
+name: Pre-release (Smart)
+
+on:
+  push:
+    branches: [ ci, dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pre-release
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Smart
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Update CA certificates
+        run: |
+          sudo apt-get update && sudo apt-get install ca-certificates
+          sudo update-ca-certificates
+          cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
+          key: ndk-27.2.12479018-${{ runner.os }}
+
+      - name: Install NDK
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: sdkmanager "ndk;27.2.12479018"
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Create signing.properties
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          touch signing.properties
+          echo keystore.path=release.keystore > signing.properties
+          echo keystore.password="$SIGNING_STORE_PASSWORD" >> signing.properties
+          echo key.alias="$SIGNING_KEY_ALIAS" >> signing.properties
+          echo key.password="$SIGNING_KEY_PASSWORD" >> signing.properties
+          echo "=== signing.properties ==="
+          cat signing.properties
+
+      - name: Build Smart APK
+        run: ./gradlew --no-daemon app:assembleAlphaRelease
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-smart-apks
+          path: app/build/outputs/apk/alpha/release/*.apk
+          retention-days: 1
+
+      - name: Cleanup secrets
+        if: always()
+        run: rm -f signing.properties
+
+  release:
+    name: Create Pre-release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all APK artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: YumeBox-smart-apks
+          path: release-artifacts
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION_NAME=$(grep 'versionName = ' build.gradle.kts | grep -oP '"\K[^"]+')
+          VERSION_CODE=$(grep 'versionCode = ' build.gradle.kts | grep -oP '\d+')
+          echo "VERSION=${VERSION_NAME}" >> $GITHUB_OUTPUT
+          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_OUTPUT
+
+      - name: Delete old pre-release
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          tag_name: pre-release
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delete_release: true
+        continue-on-error: true
+
+      - name: Tag Repo
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: pre-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pre-release
+          name: "Pre-release (Latest Smart Build) - v${{ steps.version.outputs.VERSION }}"
+          body: |
+            **Smart Pre-release Build**
+
+            Version: ${{ steps.version.outputs.VERSION }} (Build ${{ steps.version.outputs.VERSION_CODE }})
+            Build: #${{ github.run_number }}
+            Commit: ${{ github.sha }}
+
+            This is an automated pre-release build. It may be unstable.
+          files: release-artifacts/*.apk
+          prerelease: true
+          draft: false
+          make_latest: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
