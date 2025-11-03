@@ -44,7 +44,7 @@ data class Proxy(
         Fallback(true),
         URLTest(true),
         LoadBalance(true),
-
+        Smart(true),
         Unknown(false);
     }
 

@@ -79,6 +79,7 @@ tasks.register("downloadGeoFiles") {
         "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb" to "geoip.metadb",
         "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat" to "geosite.dat",
         "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb" to "ASN.mmdb",
+        "https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model-large.bin" to "Model.bin",
     )
 
     doLast {
