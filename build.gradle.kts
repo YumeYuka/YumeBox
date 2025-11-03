@@ -2,6 +2,7 @@
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
+import java.io.FileInputStream
 import java.util.*
 
 buildscript {
@@ -135,17 +136,16 @@ subprojects {
         }
 
         signingConfigs {
-            val keystore = rootProject.file("signing.properties")
-            if (keystore.exists()) {
-                create("release").apply {
-                    val prop = Properties().apply {
-                        keystore.inputStream().use { load(it) }
+            val keystorePropsFile = rootProject.file("signing.properties")
+            if (keystorePropsFile.exists()) {
+                create("release") {
+                    val props = Properties().apply {
+                        FileInputStream(keystorePropsFile).use { load(it) }
                     }
-
-                    storeFile = rootProject.file("release.keystore")
-                    storePassword = prop.getProperty("keystore.password")!!
-                    keyAlias = prop.getProperty("key.alias")!!
-                    keyPassword = prop.getProperty("key.password")!!
+                    storeFile = rootProject.file(props.getProperty("keystore.path") ?: "release.keystore")
+                    storePassword = props.getProperty("keystore.password")
+                    keyAlias = props.getProperty("key.alias")
+                    keyPassword = props.getProperty("key.password")
                 }
             }
         }
@@ -183,13 +183,13 @@ subprojects {
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_23
-            targetCompatibility = JavaVersion.VERSION_23
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
         }
 
         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
             compilerOptions {
-                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_23)
+                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
                 freeCompilerArgs.add("-Xskip-metadata-version-check")
                 freeCompilerArgs.add("-Xsuppress-version-warnings")
             }
