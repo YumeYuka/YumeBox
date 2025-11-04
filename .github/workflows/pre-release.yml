@@ -68,6 +68,11 @@ jobs:
         if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: sdkmanager "ndk;27.2.12479018"
 
+      - name: Set NDK environment
+        run: |
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> $GITHUB_ENV
+          echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> $GITHUB_ENV
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 

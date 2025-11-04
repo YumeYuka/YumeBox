@@ -124,7 +124,7 @@ fun LogsScreen(design: LogsDesign) {
         }
 
         // 日志文件列表
-        items(design.logs) { logFile ->
+        items(design.logs, key = { it.fileName }) { logFile ->
             LogFileItem(
                 logFile = logFile,
                 onClick = { design.request(LogsDesign.Request.OpenLogFile(logFile)) }

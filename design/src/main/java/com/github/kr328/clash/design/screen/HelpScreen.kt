@@ -38,7 +38,7 @@ fun HelpScreen(onOpen: (Uri) -> Unit, onBack: () -> Unit) {
                 .padding(paddingValues)
         ) {
             HELP_LINKS.forEach { (title, uri) ->
-                item {
+                item(key = title) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

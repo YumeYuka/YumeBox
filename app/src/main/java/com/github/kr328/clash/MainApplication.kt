@@ -71,6 +71,16 @@ class MainApplication : Application() {
                 assets.open("ASN.mmdb").copyTo(it)
             }
         }
+
+        val modelFile = File(clashDir, "Model.bin")
+        if (modelFile.exists() && modelFile.lastModified() < updateDate) {
+            modelFile.delete()
+        }
+        if (!modelFile.exists()) {
+            FileOutputStream(modelFile).use {
+                assets.open("Model.bin").copyTo(it)
+            }
+        }
     }
 
     fun finalize() {

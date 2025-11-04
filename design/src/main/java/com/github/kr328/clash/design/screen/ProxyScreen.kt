@@ -333,7 +333,16 @@ fun ProxyGroupContent(
 
         if (layoutType == 1) {
             val rowCount = (sortedProxies.size + 1) / 2
-            items(rowCount) { rowIdx ->
+            items(
+                count = rowCount,
+                key = { rowIdx ->
+                    val leftIdx = rowIdx * 2
+                    val rightIdx = leftIdx + 1
+                    val leftName = sortedProxies.getOrNull(leftIdx)?.name ?: ""
+                    val rightName = sortedProxies.getOrNull(rightIdx)?.name ?: ""
+                    "row_${leftName}_${rightName}"
+                }
+            ) { rowIdx ->
                 val leftIdx = rowIdx * 2
                 val rightIdx = leftIdx + 1
                 val leftProxy = sortedProxies.getOrNull(leftIdx)
