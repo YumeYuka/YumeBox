@@ -12,6 +12,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import com.github.kr328.clash.design.components.StandardBackButton
 import com.github.kr328.clash.design.theme.AppDimensions
+import com.github.kr328.clash.design.util.finishActivity
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
@@ -24,6 +26,7 @@ fun AppCrashedScreen(logs: String) {
     val context = LocalContext.current
     val scrollBehavior = MiuixScrollBehavior()
     val scrollState = rememberScrollState()
+    val debouncedFinish = rememberNavigationOnClick { context.finishActivity() }
 
     Scaffold(
         topBar = {
@@ -31,7 +34,7 @@ fun AppCrashedScreen(logs: String) {
                 title = MLang.app_crashed_page_title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    StandardBackButton { (context as? android.app.Activity)?.finish() }
+                    StandardBackButton(onClick = debouncedFinish)
                 }
             )
         }

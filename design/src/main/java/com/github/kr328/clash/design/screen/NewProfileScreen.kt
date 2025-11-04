@@ -14,6 +14,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.design.NewProfileDesign
 import com.github.kr328.clash.design.model.ProfileProvider
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import com.github.kr328.clash.design.util.toBytesString
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.*
@@ -31,7 +32,14 @@ fun NewProfileScreen(design: NewProfileDesign) {
     val scrollBehavior = MiuixScrollBehavior()
     val files = design.currentFiles()
 
-    // 根据当前选择的 provider 判断是否可以保存
+    val debouncedCancel = rememberNavigationOnClick {
+        design.requests.trySend(NewProfileDesign.Request.Cancel)
+    }
+
+    val debouncedImport = rememberNavigationOnClick {
+        design.requests.trySend(NewProfileDesign.Request.ImportFile(null))
+    }
+
     val localProviders = if (providers.isEmpty()) listOf(
         ProfileProvider.File(design.context),
         ProfileProvider.Url(design.context)
@@ -44,6 +52,28 @@ fun NewProfileScreen(design: NewProfileDesign) {
         else -> false
     }
 
+    val debouncedSave = rememberNavigationOnClick {
+        when (selected) {
+            is ProfileProvider.File -> {
+                design.requests.trySend(NewProfileDesign.Request.SaveFile(design.fileName.trim()))
+            }
+
+            is ProfileProvider.Url -> {
+                val hourOptions = listOf(0L, 1L, 3L, 6L, 12L, 24L)
+                val hours = hourOptions.getOrNull(design.urlHoursIndex) ?: 0L
+                design.requests.trySend(
+                    NewProfileDesign.Request.SaveUrl(
+                        design.urlName.trim(),
+                        design.url.trim(),
+                        hours
+                    )
+                )
+            }
+
+            else -> {}
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -52,7 +82,7 @@ fun NewProfileScreen(design: NewProfileDesign) {
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.padding(start = 24.dp),
-                        onClick = { design.requests.trySend(NewProfileDesign.Request.Cancel) }
+                        onClick = debouncedCancel
                     ) {
                         Icon(
                             imageVector = MiuixIcons.Useful.Back,
@@ -63,34 +93,7 @@ fun NewProfileScreen(design: NewProfileDesign) {
                 actions = {
                     IconButton(
                         modifier = Modifier.padding(end = 24.dp),
-                        onClick = {
-                            when (selected) {
-                                is ProfileProvider.File -> {
-                                    design.requests.trySend(NewProfileDesign.Request.SaveFile(design.fileName.trim()))
-                                }
-
-                                is ProfileProvider.Url -> {
-                                    val hourOptions = listOf(
-                                        0L,
-                                        1L,
-                                        3L,
-                                        6L,
-                                        12L,
-                                        24L
-                                    )
-                                    val hours = hourOptions.getOrNull(design.urlHoursIndex) ?: 0L
-                                    design.requests.trySend(
-                                        NewProfileDesign.Request.SaveUrl(
-                                            design.urlName.trim(),
-                                            design.url.trim(),
-                                            hours
-                                        )
-                                    )
-                                }
-
-                                else -> {}
-                            }
-                        },
+                        onClick = debouncedSave,
                         enabled = canSave
                     ) {
                         Icon(
@@ -127,7 +130,6 @@ fun NewProfileScreen(design: NewProfileDesign) {
                 }
             }
 
-            // 根据选择的 provider 显示标题
             item {
                 AnimatedContent(
                     targetState = selected,
@@ -181,7 +183,7 @@ fun NewProfileScreen(design: NewProfileDesign) {
                     ) {
                         when (provider) {
                             is ProfileProvider.File -> {
-                                FilesSection(design)
+                                FilesSection(design, debouncedImport)
                             }
 
                             is ProfileProvider.Url -> {
@@ -214,14 +216,11 @@ fun NewProfileScreen(design: NewProfileDesign) {
                                 }
                             }
 
-                            null -> {
-                                // 不应出现
-                            }
+                            null -> {}
                         }
                     }
                 }
             }
-
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
@@ -279,7 +278,7 @@ private fun DownloadProgressCard(design: NewProfileDesign) {
 }
 
 @Composable
-private fun FilesSection(design: NewProfileDesign) {
+private fun FilesSection(design: NewProfileDesign, onImport: () -> Unit) {
     val files = design.currentFiles()
 
     Column(
@@ -290,7 +289,6 @@ private fun FilesSection(design: NewProfileDesign) {
     ) {
 
 
-        // 配置文件
         Card {
             Column(Modifier.padding(12.dp)) {
                 TextField(
@@ -302,7 +300,6 @@ private fun FilesSection(design: NewProfileDesign) {
                 )
             }
             if (files.isNotEmpty()) {
-                // 显示已选择的文件列表
                 files.forEachIndexed { index, f ->
                     BasicComponent(
                         title = f.name,
@@ -318,13 +315,12 @@ private fun FilesSection(design: NewProfileDesign) {
                 }
             }
 
-            // 导入操作（仅在新建模式下显示）
             if (!design.isEditMode) {
                 com.github.kr328.clash.design.components.SettingRowArrow(
                     title = if (files.isEmpty()) MLang.import_config else MLang.reimport,
                     summary = if (files.isEmpty()) MLang.import_hint else MLang.reimport_hint,
                     rightText = MLang.action_import,
-                    onClick = { design.requests.trySend(NewProfileDesign.Request.ImportFile(null)) }
+                    onClick = onImport
                 )
             }
         }
@@ -353,7 +349,6 @@ private fun UrlSection(design: NewProfileDesign) {
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // 配置信息
         Card {
             Column(Modifier.padding(12.dp)) {
                 TextField(

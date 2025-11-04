@@ -288,7 +288,6 @@ private fun AnimatedConnectionText(
     style: TextStyle,
     modifier: Modifier = Modifier
 ) {
-    // 文字淡入淡出动画 - 加快速度
     var currentText by remember { mutableStateOf(text) }
     var targetAlpha by remember { mutableStateOf(1f) }
 
@@ -300,12 +299,9 @@ private fun AnimatedConnectionText(
 
     LaunchedEffect(text) {
         if (text != currentText) {
-            // 淡出
             targetAlpha = 0f
             delay(250)
-            // 更新文字
             currentText = text
-            // 淡入
             targetAlpha = 1f
         }
     }
@@ -337,7 +333,6 @@ fun MainScreen(
     // 点击触发的缩放动画状态
     var clickToScale by remember { mutableStateOf(false) }
 
-    // 连接超时保护 - 如果 isToggling 超过 30 秒自动重置
     var toggleStartTime by remember { mutableStateOf(0L) }
     var actualToggling by remember { mutableStateOf(isToggling) }
 
@@ -351,13 +346,11 @@ fun MainScreen(
         }
     }
 
-    // 超时检查和自动重置
     LaunchedEffect(actualToggling, toggleStartTime) {
         if (actualToggling && toggleStartTime > 0) {
             while (actualToggling && (System.currentTimeMillis() - toggleStartTime) < 30000) {
                 kotlinx.coroutines.delay(1000)
             }
-            // 30 秒后如果还在 toggling 状态，强制重置
             if (actualToggling) {
                 actualToggling = false
                 clickToScale = false
@@ -365,7 +358,6 @@ fun MainScreen(
         }
     }
 
-    // 构建连接状态 - 改进判断逻辑
     val connectionStatus = remember(running, actualToggling, currentDelay) {
         when {
             actualToggling -> ConnectionStatus.Connecting
@@ -382,7 +374,6 @@ fun MainScreen(
         }
     }
 
-    // 构建按钮状态 - 优化连接成功判断
     val buttonState = remember(connectionStatus, actualToggling, currentProxy) {
         when (connectionStatus) {
             is ConnectionStatus.Connected -> {
@@ -417,7 +408,6 @@ fun MainScreen(
         }
     }
 
-    // 监听连接状态变化，自动清除点击缩放状态
     LaunchedEffect(actualToggling, running) {
         if (!actualToggling) {
             if (running) {
@@ -427,7 +417,6 @@ fun MainScreen(
         }
     }
 
-    // 只有在已连接状态（且不是连接中）时向上移动
     val isConnected = buttonState.status is ConnectionStatus.Connected
     val offsetY by animateDpAsState(
         targetValue = if (isConnected && !actualToggling) (-30).dp else 0.dp,

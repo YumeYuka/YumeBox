@@ -11,6 +11,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.design.FilesDesign
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import com.github.kr328.clash.design.util.toBytesString
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.*
@@ -29,6 +30,10 @@ fun FilesScreen(design: FilesDesign) {
     val files = design.currentFiles()
     val editable = design.editable()
 
+    val debouncedPopStack = rememberNavigationOnClick {
+        design.requests.trySend(FilesDesign.Request.PopStack)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -37,7 +42,7 @@ fun FilesScreen(design: FilesDesign) {
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.padding(start = 24.dp),
-                        onClick = { design.requests.trySend(FilesDesign.Request.PopStack) }
+                        onClick = debouncedPopStack
                     ) {
                         Icon(
                             imageVector = MiuixIcons.Useful.Back,

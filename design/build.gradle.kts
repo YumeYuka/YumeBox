@@ -45,7 +45,7 @@ dependencies {
     implementation(libs.accompanist.drawablepainter)
     implementation(libs.pangutext)
     implementation("dev.chrisbanes.haze:haze:1.6.10")
-    implementation("com.tencent:mmkv:2.2.4")
+    implementation("com.tencent:mmkv:1.3.11")
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
 }

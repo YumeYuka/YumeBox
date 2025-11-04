@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.design.ProxyDesign
 import com.github.kr328.clash.design.proxy.*
 import com.github.kr328.clash.design.ui.Lightning
+import com.github.kr328.clash.design.util.rememberThrottledOnClick
 import com.github.kr328.clash.service.StatusProvider.Companion.currentProfile
 import dev.oom_wg.purejoy.mlang.MLang
 import kotlinx.coroutines.delay
@@ -69,9 +70,13 @@ fun ProxyPage(
     val pullToRefreshState = rememberPullToRefreshState()
     val coroutineScope = rememberCoroutineScope()
 
+    val throttledReloadAll = rememberThrottledOnClick(throttleMillis = 2000L) {
+        proxyDesign.requests.trySend(ProxyDesign.Request.ReloadAll)
+    }
+
     LaunchedEffect(Unit) {
         while (true) {
-            delay(30000) // 每 30 秒检查一次
+            delay(30000)
             proxyDesign.cleanupTimeoutTests()
             proxyDesign.cleanupExpiredCache()
         }
@@ -183,7 +188,7 @@ fun ProxyPage(
                     val menuExpanded = remember { mutableStateOf(false) }
                     IconButton(
                         modifier = Modifier.padding(end = 16.dp),
-                        onClick = { proxyDesign.requests.trySend(ProxyDesign.Request.ReloadAll) }
+                        onClick = throttledReloadAll
                     ) {
                         Icon(
                             Lightning,
@@ -333,7 +338,16 @@ fun ProxyGroupContent(
 
         if (layoutType == 1) {
             val rowCount = (sortedProxies.size + 1) / 2
-            items(rowCount) { rowIdx ->
+            items(
+                count = rowCount,
+                key = { rowIdx ->
+                    val leftIdx = rowIdx * 2
+                    val rightIdx = leftIdx + 1
+                    val leftProxy = sortedProxies.getOrNull(leftIdx)
+                    val rightProxy = sortedProxies.getOrNull(rightIdx)
+                    "${proxyDesign.currentPage}_row_${leftProxy?.name ?: "empty_${leftIdx}"}_${rightProxy?.name ?: "empty_${rightIdx}"}"
+                }
+            ) { rowIdx ->
                 val leftIdx = rowIdx * 2
                 val rightIdx = leftIdx + 1
                 val leftProxy = sortedProxies.getOrNull(leftIdx)
@@ -349,7 +363,7 @@ fun ProxyGroupContent(
                 )
             }
         } else {
-            items(sortedProxies, key = { it.name }) { proxy ->
+            items(sortedProxies, key = { proxy -> "${proxyDesign.currentPage}_${proxy.name}_${proxy.type}" }) { proxy ->
                 val isSelected = selectedProxyName == proxy.name
                 val proxyDelay = delayMap[proxy.name] ?: proxy.delay
 

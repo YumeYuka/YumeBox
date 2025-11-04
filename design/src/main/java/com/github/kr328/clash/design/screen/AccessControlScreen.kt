@@ -28,6 +28,8 @@ import com.github.kr328.clash.design.AccessControlDesign
 import com.github.kr328.clash.design.components.EmptyState
 import com.github.kr328.clash.design.model.AppInfo
 import com.github.kr328.clash.design.model.AppInfoSort
+import com.github.kr328.clash.design.util.finishActivity
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import dev.oom_wg.purejoy.mlang.MLang
 import dev.oom_wg.purejoy.mlang.MLang.more_title
 import dev.oom_wg.purejoy.mlang.MLang.reverse_order
@@ -53,6 +55,7 @@ import top.yukonga.miuix.kmp.utils.overScrollVertical
 fun AccessControlScreen(design: AccessControlDesign) {
     val scrollBehavior = MiuixScrollBehavior()
     val context = LocalContext.current
+    val debouncedFinish = rememberNavigationOnClick { context.finishActivity() }
 
     var searchText by rememberSaveable { mutableStateOf("") }
     var showMoreBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -105,7 +108,7 @@ fun AccessControlScreen(design: AccessControlDesign) {
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.padding(start = 24.dp),
-                        onClick = { (context as? android.app.Activity)?.finish() }
+                        onClick = debouncedFinish
                     ) {
                         Icon(MiuixIcons.Useful.Back, MLang.action_back)
                     }

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.design.theme.AppDimensions
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.*
 import top.yukonga.miuix.kmp.icon.MiuixIcons
@@ -28,6 +29,7 @@ fun StandardScreen(
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = MiuixScrollBehavior()
+    val debouncedOnBack = onBack?.let { rememberNavigationOnClick(it) }
 
     Scaffold(
         topBar = {
@@ -35,10 +37,10 @@ fun StandardScreen(
                 title = title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    if (onBack != null) {
+                    if (debouncedOnBack != null) {
                         IconButton(
                             modifier = Modifier.padding(start = AppDimensions.spacing_xxl),
-                            onClick = onBack
+                            onClick = debouncedOnBack
                         ) {
                             Icon(
                                 imageVector = MiuixIcons.Useful.Back,
@@ -69,6 +71,7 @@ fun StandardListScreen(
     content: LazyListScope.() -> Unit
 ) {
     val scrollBehavior = MiuixScrollBehavior()
+    val debouncedOnBack = onBack?.let { rememberNavigationOnClick(it) }
 
     Scaffold(
         topBar = {
@@ -76,10 +79,10 @@ fun StandardListScreen(
                 title = title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    if (onBack != null) {
+                    if (debouncedOnBack != null) {
                         IconButton(
                             modifier = Modifier.padding(start = AppDimensions.spacing_xxl),
-                            onClick = onBack
+                            onClick = debouncedOnBack
                         ) {
                             Icon(
                                 imageVector = MiuixIcons.Useful.Back,
@@ -120,6 +123,8 @@ fun EditorScreen(
     showAddButton: Boolean = true,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val debouncedOnAdd = rememberNavigationOnClick(onAdd)
+    
     StandardScreen(
         title = title,
         onBack = onBack,
@@ -127,7 +132,7 @@ fun EditorScreen(
             if (showAddButton) {
                 IconButton(
                     modifier = Modifier.padding(end = AppDimensions.spacing_xxl),
-                    onClick = onAdd
+                    onClick = debouncedOnAdd
                 ) {
                     Icon(
                         imageVector = MiuixIcons.Useful.New,

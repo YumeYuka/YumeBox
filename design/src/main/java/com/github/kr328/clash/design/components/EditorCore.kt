@@ -45,7 +45,10 @@ fun <T> EditorItemList(
             }
         }
 
-        itemsIndexed(items) { index, item ->
+        itemsIndexed(
+            items = items,
+            key = { index, item -> "${System.identityHashCode(item)}_$index" }
+        ) { index, item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

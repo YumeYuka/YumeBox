@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.*
 import top.yukonga.miuix.kmp.icon.MiuixIcons
@@ -18,12 +19,14 @@ import top.yukonga.miuix.kmp.utils.overScrollVertical
 fun HelpScreen(onOpen: (Uri) -> Unit, onBack: () -> Unit) {
     val scrollBehavior = MiuixScrollBehavior()
 
+    val debouncedOnBack = rememberNavigationOnClick(onBack)
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = MLang.help_page_title,
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = debouncedOnBack) {
                         Icon(MiuixIcons.Useful.Back, contentDescription = MLang.action_back)
                     }
                 }

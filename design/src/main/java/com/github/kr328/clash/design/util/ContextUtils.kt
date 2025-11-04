@@ -36,8 +36,13 @@ fun Context.getHtml(@StringRes resId: Int): Spanned {
 /**
  * 安全地结束 Activity
  *
- * 如果当前 Context 是 Activity，则调用 finish()
+ * 如果当前 Context 是 Activity 且未处于 finishing 状态，则调用 finish()
+ * 这可以防止重复调用 finish() 导致的问题
  */
 fun Context.finishActivity() {
-    (this as? Activity)?.finish()
+    (this as? Activity)?.let { activity ->
+        if (!activity.isFinishing && !activity.isDestroyed) {
+            activity.finish()
+        }
+    }
 }

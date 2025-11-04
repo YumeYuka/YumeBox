@@ -8,6 +8,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import com.github.kr328.clash.design.components.StandardBackButton
 import com.github.kr328.clash.design.theme.AppDimensions
+import com.github.kr328.clash.design.util.finishActivity
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.*
 import top.yukonga.miuix.kmp.extra.SuperArrow
@@ -18,6 +20,7 @@ import top.yukonga.miuix.kmp.utils.overScrollVertical
 fun ApkBrokenScreen(onNavigate: (String) -> Unit) {
     val context = LocalContext.current
     val scrollBehavior = MiuixScrollBehavior()
+    val debouncedFinish = rememberNavigationOnClick { context.finishActivity() }
 
     Scaffold(
         topBar = {
@@ -25,7 +28,7 @@ fun ApkBrokenScreen(onNavigate: (String) -> Unit) {
                 title = MLang.apk_broken_page_title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    StandardBackButton { (context as? android.app.Activity)?.finish() }
+                    StandardBackButton(onClick = debouncedFinish)
                 }
             )
         }

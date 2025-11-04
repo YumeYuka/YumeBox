@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -191,10 +192,14 @@ fun LogcatScreen(design: LogcatDesign) {
         }
 
         // 日志消息列表（带动画效果）
-        items(
+        itemsIndexed(
             items = design.getFilteredMessages(),
-            key = { message -> "${message.time.time}_${message.message.hashCode()}" }
-        ) { message ->
+            key = { index, message ->
+                "${message.time.time}_${message.level}_${index}_${
+                    message.message.take(50).hashCode()
+                }"
+            }
+        ) { index, message ->
             LogMessageItem(
                 message = message,
                 onClick = { design.copyToClipboard(message.message) },
