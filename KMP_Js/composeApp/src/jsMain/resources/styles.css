@@ -1,0 +1,52 @@
+@font-face {
+	font-family: "Alibaba PuHuiTi";
+	src: url("font/Alibaba-PuHuiTi-Heavy.ttf") format("truetype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Alibaba PuHuiTi";
+	src: url("font/Alibaba-PuHuiTi-Heavy.ttf") format("truetype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Alibaba PuHuiTi";
+	src: url("font/Alibaba-PuHuiTi-Heavy.ttf") format("truetype");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#ComposeTarget {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+*,
+*::before,
+*::after {
+	font-family: "Alibaba PuHuiTi", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue",
+		Arial, "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif !important;
+}
+
+canvas {
+	font-family: "Alibaba PuHuiTi", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue",
+		Arial, "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif !important;
+}

@@ -1,0 +1,50 @@
+* text=auto
+
+update-binary text eol=lf
+updater-script text eol=lf
+
+*.sh text eol=lf
+*.rc text eol=lf
+*.awk text eol=lf
+*.prop text eol=lf
+*.properties text eol=lf
+*.rule text eol=lf
+
+*.mk text eol=lf
+*.mod text eol=lf
+*.sum text eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.vbs text eol=crlf
+
+*.txt text eol=lf
+*.md text eol=lf
+*.mkd text eol=lf
+*.mdx text eol=lf
+*.json text eol=lf
+
+*.html text eol=lf
+*.htm text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.map text eol=lf
+*.svg text eol=lf
+
+*.cfg text eol=lf
+*.conf text eol=lf
+*.ini text eol=lf
+*.xml text eol=lf
+
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.fvv text eol=lf
+*.fw text eol=lf
+*.fww text eol=lf
+*.rpp text eol=lf
+*.rxx text eol=lf
+*.r++ text eol=lf

@@ -1,0 +1,23 @@
+{
+  "name": "yuanshen",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build && del /s /q ..\\src\\webroot\\* && xcopy dist\\* ..\\src\\webroot\\ /s /e /y",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "kernelsu": "^1.0.6",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7",
+    "vue-tsc": "^3.1.0"
+  }
+}
