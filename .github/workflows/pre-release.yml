@@ -2,127 +2,168 @@ name: Pre-release (Smart)
 
 on:
   push:
-    branches: [ ci, dev ]
+    branches: [ smart ]
+  pull_request:
+    branches: [ smart ]
   workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create Pre-release'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 concurrency:
-  group: pre-release
+  group: smart-build
   cancel-in-progress: true
 
 jobs:
   build:
     name: Build Smart
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+    env:
+      KEYSTORE_PATH: release.keystore
+      KEYSTORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(grep 'versionName = ' build.gradle.kts | grep -oP '"\K[^"]+')" >> $GITHUB_OUTPUT
+
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '24'
+          cache: 'gradle'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-
-      - name: Cache Go modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          cache: true
 
       - name: Update CA certificates
         run: |
-          sudo apt-get update && sudo apt-get install ca-certificates
+          sudo apt-get update && sudo apt-get install -y ca-certificates
           sudo update-ca-certificates
           cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v3
 
       - name: Cache NDK
         id: cache-ndk
         uses: actions/cache@v4
         with:
           path: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
-          key: ndk-27.2.12479018-${{ runner.os }}
+          key: ndk-27.2.12479018
 
-      - name: Install NDK
-        if: steps.cache-ndk.outputs.cache-hit != 'true'
+      - if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: sdkmanager "ndk;27.2.12479018"
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      - name: Create signing.properties
-        env:
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+      - name: Create signing config
         run: |
-          touch signing.properties
-          echo keystore.path=release.keystore > signing.properties
-          echo keystore.password="$SIGNING_STORE_PASSWORD" >> signing.properties
-          echo key.alias="$SIGNING_KEY_ALIAS" >> signing.properties
-          echo key.password="$SIGNING_KEY_PASSWORD" >> signing.properties
-          echo "=== signing.properties ==="
-          cat signing.properties
+          cat > signing.properties <<EOF
+          keystore.path=$KEYSTORE_PATH
+          keystore.password=$KEYSTORE_PASSWORD
+          key.alias=$KEY_ALIAS
+          key.password=$KEY_PASSWORD
+          EOF
 
-      - name: Build Smart APK
-        run: ./gradlew --no-daemon app:assembleAlphaRelease
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon app:assembleAlphaRelease
 
-      - name: Upload APK artifact
+      - name: Generate build summary
+        if: always()
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -d "app/build/outputs/apk/alpha/release" ]; then
+            echo "### APK Files" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Architecture | Size |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------------|------|" >> $GITHUB_STEP_SUMMARY
+            for apk in app/build/outputs/apk/alpha/release/*.apk; do
+              if [ -f "$apk" ]; then
+                name=$(basename "$apk" .apk | sed 's/YumeBox-alpha-//' | sed 's/-release//')
+                size=$(du -h "$apk" | cut -f1)
+                echo "| $name | $size |" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
+          else
+            echo "Build failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: YumeBox-smart-apks
-          path: app/build/outputs/apk/alpha/release/*.apk
-          retention-days: 1
+          name: YumeBox-smart-v${{ steps.version.outputs.VERSION }}-arm64-v8a
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-arm64-v8a-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 7 }}
 
-      - name: Cleanup secrets
-        if: always()
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-smart-v${{ steps.version.outputs.VERSION }}-armeabi-v7a
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-armeabi-v7a-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 7 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-smart-v${{ steps.version.outputs.VERSION }}-x86_64
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-x86_64-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 7 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-smart-v${{ steps.version.outputs.VERSION }}-x86
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-x86-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 7 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-smart-v${{ steps.version.outputs.VERSION }}-universal
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-universal-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 7 }}
+
+      - if: always()
         run: rm -f signing.properties
 
   release:
     name: Create Pre-release
     needs: build
     runs-on: ubuntu-latest
+    if: github.event.inputs.create_release == 'true' && github.event_name != 'pull_request'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download all APK artifacts
+      - name: Download APKs
         uses: actions/download-artifact@v4
         with:
-          name: YumeBox-smart-apks
-          path: release-artifacts
+          pattern: YumeBox-smart-v${{ needs.build.outputs.version }}-*
+          path: apks
+          merge-multiple: true
 
-      - name: Extract version
-        id: version
-        run: |
-          VERSION_NAME=$(grep 'versionName = ' build.gradle.kts | grep -oP '"\K[^"]+')
-          VERSION_CODE=$(grep 'versionCode = ' build.gradle.kts | grep -oP '\d+')
-          echo "VERSION=${VERSION_NAME}" >> $GITHUB_OUTPUT
-          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_OUTPUT
-
-      - name: Delete old pre-release
+      - name: Delete old release
         uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           tag_name: pre-release
@@ -130,30 +171,42 @@ jobs:
           delete_release: true
         continue-on-error: true
 
-      - name: Tag Repo
-        uses: richardsimko/update-tag@v1
+      - uses: richardsimko/update-tag@v1
         with:
           tag_name: pre-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create pre-release
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: pre-release
-          name: "Pre-release (Latest Smart Build) - v${{ steps.version.outputs.VERSION }}"
+          name: "Smart Pre-release v${{ needs.build.outputs.version }}"
           body: |
-            **Smart Pre-release Build**
-
-            Version: ${{ steps.version.outputs.VERSION }} (Build ${{ steps.version.outputs.VERSION_CODE }})
-            Build: #${{ github.run_number }}
+            Version: ${{ needs.build.outputs.version }}
             Commit: ${{ github.sha }}
-
-            This is an automated pre-release build. It may be unstable.
-          files: release-artifacts/*.apk
+          files: apks/*.apk
           prerelease: true
-          draft: false
           make_latest: false
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    name: Notify
+    needs: [ build, release ]
+    runs-on: ubuntu-latest
+    if: success() && github.event.inputs.create_release == 'true' && github.event_name != 'pull_request'
+
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL_ID }},${{ secrets.TELEGRAM_GROUP_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            New push to GitHub!
+            
+            > YumeBox Smart Pre-release v${{ needs.build.outputs.version }}
+            
+            by ${{ github.actor }}
+            
+            [See release detail here](https://github.com/${{ github.repository }}/releases/tag/pre-release)
