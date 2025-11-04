@@ -163,21 +163,7 @@ jobs:
           path: apks
           merge-multiple: true
 
-      - name: Delete old release
-        uses: dev-drprasad/delete-tag-and-release@v1.1
-        with:
-          tag_name: pre-release
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          delete_release: true
-        continue-on-error: true
-
-      - uses: richardsimko/update-tag@v1
-        with:
-          tag_name: pre-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create release
+      - name: Update release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: pre-release
