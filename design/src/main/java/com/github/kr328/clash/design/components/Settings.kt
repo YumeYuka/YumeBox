@@ -9,6 +9,7 @@ import com.github.kr328.clash.design.dialog.DialogState
 import com.github.kr328.clash.design.dialog.UnifiedInputDialog
 import com.github.kr328.clash.design.dialog.Validator
 import com.github.kr328.clash.design.util.SelectionMapping
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Card
@@ -96,10 +97,12 @@ fun SettingRowArrow(
     enabled: Boolean = true,
     rightText: String? = null,
 ) {
+    val debouncedOnClick = rememberNavigationOnClick(onClick)
+    
     SuperArrow(
         title = title,
         summary = summary,
-        onClick = onClick,
+        onClick = debouncedOnClick,
         enabled = enabled,
         rightText = rightText,
     )

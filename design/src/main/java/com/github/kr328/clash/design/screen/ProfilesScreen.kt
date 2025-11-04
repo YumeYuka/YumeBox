@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.design.ProfilesDesign
 import com.github.kr328.clash.design.theme.AppDimensions
 import com.github.kr328.clash.design.theme.AppShapes
+import com.github.kr328.clash.design.util.finishActivity
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import com.github.kr328.clash.design.util.toBytesString
 import com.github.kr328.clash.design.util.toRelativeTimeString
 import com.github.kr328.clash.service.model.Profile
@@ -42,8 +44,8 @@ fun ProfilesScreen(design: ProfilesDesign) {
     val scrollBehavior = MiuixScrollBehavior()
     val profiles = design.profiles
     val ctx = LocalContext.current
+    val debouncedFinish = rememberNavigationOnClick { ctx.finishActivity() }
 
-    // 模式：0 = 激活模式, 1 = 编辑模式
     val isEditMode = design.modeIndex == 1
 
     Scaffold(
@@ -54,7 +56,8 @@ fun ProfilesScreen(design: ProfilesDesign) {
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.padding(start = 24.dp),
-                        onClick = { (ctx as? android.app.Activity)?.finish() }) {
+                        onClick = debouncedFinish
+                    ) {
                         Icon(
                             imageVector = MiuixIcons.Useful.Back,
                             contentDescription = MLang.action_back
@@ -90,7 +93,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    // 模式切换
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -139,7 +141,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
                         .nestedScroll(scrollBehavior.nestedScrollConnection),
                     contentPadding = paddingValues
                 ) {
-                    // 模式切换
                     item {
                         Card(
                             modifier = Modifier
@@ -164,7 +165,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
 
                     item { Spacer(modifier = Modifier.height(8.dp)) }
 
-                    // 配置文件列表
                     items(profiles, key = { it.uuid }) { p ->
                         ProfileCard(
                             design = design,
@@ -182,11 +182,9 @@ fun ProfilesScreen(design: ProfilesDesign) {
         }
     )
 
-    // 对话框状态
     val showDialog = design.showDialog
     val dialogProfile = design.dialogProfile
 
-    // 未保存配置对话框
     if (showDialog && dialogProfile != null) {
         SuperDialog(
             title = MLang.unsaved_title,
@@ -205,7 +203,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
         }
     }
 
-    // 编辑模式操作菜单
     if (design.showMenuDialog && design.menuProfile != null) {
         val profile = design.menuProfile!!
         SuperBottomSheet(
@@ -219,7 +216,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // 更新配置（仅远程配置）
                 if (profile.imported && profile.type != Profile.Type.File) {
                     Card(modifier = Modifier.fillMaxWidth()) {
                         SuperArrow(
@@ -233,7 +229,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
                     }
                 }
 
-                // 编辑配置
                 Card(modifier = Modifier.fillMaxWidth()) {
                     SuperArrow(
                         title = MLang.action_edit_config,
@@ -245,7 +240,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
                     )
                 }
 
-                // 复制配置（仅已导入配置）
                 if (profile.imported) {
                     Card(modifier = Modifier.fillMaxWidth()) {
                         SuperArrow(
@@ -259,7 +253,6 @@ fun ProfilesScreen(design: ProfilesDesign) {
                     }
                 }
 
-                // 删除配置
                 Card(modifier = Modifier.fillMaxWidth()) {
                     SuperArrow(
                         title = MLang.action_delete_config,
@@ -291,7 +284,6 @@ private fun ProfileCard(
     val total = p.total
     val progress = if (total > 0) used.toFloat() / total else 0f
 
-    // 构建标题（名称 + 未保存标签）
     val titleWithBadge = @Composable {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -329,7 +321,6 @@ private fun ProfileCard(
         }
     }
 
-    // 构建摘要（类型 + 更新时间 + 流量/到期信息）
     val summaryText = buildString {
         append(
             when (p.type) {
@@ -388,7 +379,6 @@ private fun ProfileCard(
                     .background(MiuixTheme.colorScheme.surface)
                     .padding(16.dp)
             ) {
-                // 使用简化的布局：标题行 + Checkbox 固定占位
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -397,7 +387,6 @@ private fun ProfileCard(
                         titleWithBadge()
                     }
                     Spacer(modifier = Modifier.width(16.dp))
-                    // 固定大小的占位区域，避免切换模式时大小变化
                     Box(
                         modifier = Modifier.size(40.dp),
                         contentAlignment = Alignment.Center
@@ -411,7 +400,6 @@ private fun ProfileCard(
                     }
                 }
 
-                // 摘要信息
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = summaryText,
@@ -419,7 +407,6 @@ private fun ProfileCard(
                     color = MiuixTheme.colorScheme.onSurfaceVariantActions
                 )
 
-                // 流量进度条
                 if (total > 0) {
                     Spacer(modifier = Modifier.height(12.dp))
                     LinearProgressIndicator(

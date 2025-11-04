@@ -10,6 +10,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.design.PropertiesDesign
+import com.github.kr328.clash.design.util.finishActivity
+import com.github.kr328.clash.design.util.rememberNavigationOnClick
 import com.github.kr328.clash.service.model.Profile
 import dev.oom_wg.purejoy.mlang.MLang
 import top.yukonga.miuix.kmp.basic.*
@@ -25,6 +27,7 @@ fun PropertiesScreen(design: PropertiesDesign) {
     val context = LocalContext.current
     val scrollBehavior = MiuixScrollBehavior()
     val currentProfile = design.profile
+    val debouncedFinish = rememberNavigationOnClick { context.finishActivity() }
 
     Scaffold(
         topBar = {
@@ -34,7 +37,7 @@ fun PropertiesScreen(design: PropertiesDesign) {
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.padding(start = 16.dp),
-                        onClick = { (context as? android.app.Activity)?.finish() }
+                        onClick = debouncedFinish
                     ) {
                         Icon(MiuixIcons.Useful.Back, MLang.action_back)
                     }

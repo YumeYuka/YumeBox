@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.foundation)
     implementation(libs.miuix.android)
-    implementation("com.tencent:mmkv:2.2.4")
+    implementation("com.tencent:mmkv:1.3.11")
     implementation(libs.coil.compose)
 
     // 调试工具

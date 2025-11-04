@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.github.kr328.clash.core.model.Provider
 import com.github.kr328.clash.design.ProvidersDesign
 import com.github.kr328.clash.design.components.EmptyState
+import com.github.kr328.clash.design.util.rememberThrottledOnClick
 import com.github.kr328.clash.design.util.toRelativeTimeString
 import dev.oom_wg.purejoy.mlang.MLang
 import kotlinx.coroutines.delay
@@ -33,6 +34,11 @@ fun ProvidersScreen(design: ProvidersDesign) {
 private fun ProvidersContentScreen(design: ProvidersDesign) {
     val scrollBehavior = MiuixScrollBehavior()
     var topRotate by remember { mutableStateOf(0f) }
+
+    val throttledUpdateAll = rememberThrottledOnClick(throttleMillis = 2000L) {
+        design.requestUpdateAll()
+    }
+    
     LaunchedEffect(design.allUpdating) {
         if (design.allUpdating) {
             while (isActive && design.allUpdating) {
@@ -50,7 +56,8 @@ private fun ProvidersContentScreen(design: ProvidersDesign) {
                 actions = {
                     IconButton(
                         modifier = Modifier.padding(end = 24.dp),
-                        onClick = { design.requestUpdateAll() }, enabled = !design.allUpdating
+                        onClick = throttledUpdateAll,
+                        enabled = !design.allUpdating
                     ) {
                         Icon(
                             MiuixIcons.Useful.Refresh,
@@ -93,6 +100,8 @@ private fun ProviderRow(provider: Provider, isUpdating: Boolean, onUpdate: () ->
         append("\n${MLang.update_time_label}$timeText")
     }
 
+    val throttledOnUpdate = rememberThrottledOnClick(throttleMillis = 1000L, onClick = onUpdate)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,7 +123,7 @@ private fun ProviderRow(provider: Provider, isUpdating: Boolean, onUpdate: () ->
                     }
                     rowRotate = 0f
                 }
-                IconButton(onClick = onUpdate, enabled = updatable && !isUpdating) {
+                IconButton(onClick = throttledOnUpdate, enabled = updatable && !isUpdating) {
                     Icon(
                         MiuixIcons.Useful.Refresh,
                         contentDescription = MLang.action_update,
