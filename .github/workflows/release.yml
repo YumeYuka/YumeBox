@@ -1,0 +1,209 @@
+name: Release (Alpha)
+
+on:
+  push:
+    branches: [ Yume ]
+  pull_request:
+    branches: [ Yume ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0, leave empty for auto)'
+        required: false
+        default: ''
+      create_release:
+        description: 'Create GitHub Release'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: alpha-build
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  build:
+    name: Build Alpha
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+    env:
+      KEYSTORE_PATH: release.keystore
+      KEYSTORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Extract version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=$(grep 'versionName = ' build.gradle.kts | grep -oP '"\K[^"]+')" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          cache: 'gradle'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Update CA certificates
+        run: |
+          sudo apt-get update && sudo apt-get install -y ca-certificates
+          sudo update-ca-certificates
+          cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Cache NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.ANDROID_SDK_ROOT }}/ndk/27.2.12479018
+          key: ndk-27.2.12479018
+
+      - if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: sdkmanager "ndk;27.2.12479018"
+
+      - name: Create signing config
+        run: |
+          cat > signing.properties <<EOF
+          keystore.path=$KEYSTORE_PATH
+          keystore.password=$KEYSTORE_PASSWORD
+          key.alias=$KEY_ALIAS
+          key.password=$KEY_PASSWORD
+          EOF
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon app:assembleAlphaRelease \
+            -PversionName=${{ steps.version.outputs.VERSION }} \
+            -PversionCode=$(echo "${{ steps.version.outputs.VERSION }}" | awk -F. '{print $1*10000 + $2*100 + $3 + 100000}')
+
+      - name: Generate build summary
+        if: always()
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -d "app/build/outputs/apk/alpha/release" ]; then
+            echo "### APK Files" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Architecture | Size |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------------|------|" >> $GITHUB_STEP_SUMMARY
+            for apk in app/build/outputs/apk/alpha/release/*.apk; do
+              if [ -f "$apk" ]; then
+                name=$(basename "$apk" .apk | sed 's/YumeBox-alpha-//' | sed 's/-release//')
+                size=$(du -h "$apk" | cut -f1)
+                echo "| $name | $size |" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
+          else
+            echo "Build failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-alpha-v${{ steps.version.outputs.VERSION }}-arm64-v8a
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-arm64-v8a-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 30 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-alpha-v${{ steps.version.outputs.VERSION }}-armeabi-v7a
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-armeabi-v7a-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 30 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-alpha-v${{ steps.version.outputs.VERSION }}-x86_64
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-x86_64-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 30 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-alpha-v${{ steps.version.outputs.VERSION }}-x86
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-x86-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 30 }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YumeBox-alpha-v${{ steps.version.outputs.VERSION }}-universal
+          path: app/build/outputs/apk/alpha/release/YumeBox-alpha-universal-release.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 1 || 30 }}
+
+      - if: always()
+        run: rm -f signing.properties
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event.inputs.create_release == 'true' && github.event_name != 'pull_request'
+
+    steps:
+      - name: Download APKs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: YumeBox-alpha-v${{ needs.build.outputs.version }}-*
+          path: apks
+          merge-multiple: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: YumeBox v${{ needs.build.outputs.version }}
+          body: |
+            Version: ${{ needs.build.outputs.version }}
+            Commit: ${{ github.sha }}
+          files: apks/*.apk
+          make_latest: true
+          generate_release_notes: true
+
+  notify:
+    name: Notify
+    needs: [ build, release ]
+    runs-on: ubuntu-latest
+    if: success() && github.event.inputs.create_release == 'true' && github.event_name != 'pull_request'
+
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL_ID }},${{ secrets.TELEGRAM_GROUP_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            New release to GitHub!
+            
+            > YumeBox v${{ needs.build.outputs.version }}
+            
+            by ${{ github.actor }}
+            
+            [See release detail here](https://github.com/${{ github.repository }}/releases/tag/v${{ needs.build.outputs.version }})
