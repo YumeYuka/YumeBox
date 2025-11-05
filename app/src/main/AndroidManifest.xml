@@ -30,6 +30,7 @@
         android:roundIcon="@mipmap/yume_round"
         android:supportsRtl="true"
         android:theme="@style/BootstrapTheme"
+        android:resizeableActivity="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="N">
 
@@ -42,7 +43,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
             android:label="YumeBox"
             android:launchMode="singleTop">
@@ -96,101 +97,101 @@
         </activity>
         <activity
             android:name=".ApkBrokenActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/application_broken" />
         <activity
             android:name=".AppCrashedActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/application_crashed"
             android:launchMode="singleTask" />
         <activity
             android:name=".ProfilesActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/profiles" />
         <activity
             android:name=".NewProfileActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/create_profile" />
         <activity
             android:name=".PropertiesActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="Profile Properties"/>
         <activity
             android:name=".ProxyActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/proxy" />
         <activity
             android:name=".ProvidersActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/providers" />
         <activity
             android:name=".LogsActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/logs" />
         <activity
             android:name=".LogcatActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/logcat" />
         <activity
             android:name=".SettingsActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/settings" />
         <activity
             android:name=".NetworkSettingsActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/network" />
         <activity
             android:name=".AppSettingsActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/app" />
         <activity
             android:name=".OverrideSettingsActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:label="@string/override" />
         <activity
             android:name=".MetaFeatureSettingsActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:label="@string/meta_features" />
         <activity
             android:name=".AccessControlActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/access_control_packages" />
         <activity
             android:name=".HelpActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/help" />
         <activity
             android:name=".AboutActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="@string/about"/>
         <activity
             android:name=".ListEditorActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="列表编辑器"
             android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".KeyValueEditorActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:label="键值对编辑器"
             android:windowSoftInputMode="adjustResize"/>

@@ -3,6 +3,7 @@ package com.github.kr328.clash
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
@@ -123,6 +124,14 @@ abstract class BaseActivity<D : Design<*>> : ComponentActivity(),
         }
     }
 
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+
+        if (isInMultiWindowMode) {
+            handleFreeformDensity(newConfig)
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
@@ -130,6 +139,31 @@ abstract class BaseActivity<D : Design<*>> : ComponentActivity(),
             ApplicationObserver.createdActivities.forEach {
                 it.recreate()
             }
+        }
+
+        handleFreeformDensity(newConfig)
+    }
+
+    private fun handleFreeformDensity(newConfig: Configuration) {
+        val isInFreeform = newConfig.toString().contains("mWindowingMode=freeform")
+        if (!isInFreeform) {
+            return
+        }
+
+        val res = resources
+        val dm = DisplayMetrics()
+        dm.setTo(res.displayMetrics)
+
+        val smallestWidth = newConfig.smallestScreenWidthDp
+        if (smallestWidth < 600) {
+            val baseDensity = 2.75f
+            dm.density = baseDensity
+            dm.scaledDensity = baseDensity * (res.displayMetrics.scaledDensity / res.displayMetrics.density)
+            dm.densityDpi = (160 * baseDensity).toInt()
+
+            val config = Configuration(newConfig)
+            config.densityDpi = dm.densityDpi
+            res.updateConfiguration(config, dm)
         }
     }
 
