@@ -1,0 +1,47 @@
+/*
+ * This file is part of YumeBox.
+ *
+ * YumeBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) YumeYuka & YumeLira 2025.
+ *
+ */
+
+package plus.yumeyuka.yumebox.common.util
+
+import android.os.Build
+
+object DeviceUtil {
+
+    fun is32BitDevice(): Boolean {
+        val supportedABIs = Build.SUPPORTED_ABIS
+        return supportedABIs.isNotEmpty() && supportedABIs.all { abi ->
+            abi.contains("armeabi-v7a") || abi.contains("x86")
+        }
+    }
+
+    fun getPreferredAbi(): String {
+        return when (Build.SUPPORTED_ABIS.firstOrNull()) {
+            "arm64-v8a" -> "arm64-v8a"
+            "x86_64" -> "x86_64"
+            "armeabi-v7a" -> "armeabi-v7a"
+            "x86" -> "x86"
+            else -> "arm64-v8a"
+        }
+    }
+
+    fun supportsAbi(abi: String): Boolean {
+        return Build.SUPPORTED_ABIS.contains(abi)
+    }
+}

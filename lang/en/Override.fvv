@@ -1,0 +1,91 @@
+<Override Page>
+Override = {
+    Title = "Override Settings"
+    
+    Section = {
+        General = "General"
+        AuthHosts = "Auth & Hosts"
+        ExternalController = "External Controller"
+        Dns = "DNS"
+    }
+    
+    General = {
+        HttpPort = "HTTP Port"
+        SocksPort = "SOCKS Port"
+        MixedPort = "Mixed Port"
+        RedirectPort = "Redirect Port"
+        TproxyPort = "TProxy Port"
+        AllowLan = "Allow LAN"
+        Ipv6 = "IPv6"
+        ProxyMode = "Proxy Mode"
+        ProxyModeNotModify = "Don't Modify"
+        ProxyModeDirect = "Direct"
+        ProxyModeGlobal = "Global"
+        ProxyModeRule = "Rule"
+        LogLevel = "Log Level"
+    }
+    
+    AuthHosts = {
+        Authentication = "Authentication"
+        AuthenticationHint = "Format: user:password"
+        HostsMapping = "Hosts Mapping"
+        HostsKeyHint = "Domain"
+        HostsValueHint = "IP Address"
+    }
+    
+    ExternalController = {
+        Address = "Controller Address"
+        AddressHint = "e.g.: 127.0.0.1:9090"
+        Tls = "TLS Controller Address"
+        TlsHint = "e.g.: 127.0.0.1:9443"
+        ApiSecret = "API Secret"
+        ApiSecretHint = "Leave empty to not modify"
+        CorsAllowOrigins = "CORS Allow Origins"
+        CorsAllowOriginsHint = "e.g.: http://localhost:9090"
+        CorsAllowPrivate = "Allow Private Network"
+    }
+    
+    Dns = {
+        Policy = "DNS Policy"
+        PolicyNotModify = "Don't Modify"
+        PolicyForceEnable = "Force Enable"
+        PolicyUseBuiltin = "Use Built-in"
+        PreferH3 = "Prefer HTTP/3"
+        Listen = "Listen Address"
+        ListenHint = "e.g.: 0.0.0.0:53"
+        Ipv6 = "DNS IPv6"
+        UseHosts = "Use Hosts"
+        AppendSystem = "Append System DNS"
+        EnhancedMode = "Enhanced Mode"
+        EnhancedNotModify = "Don't Modify"
+        EnhancedDisable = "Disable"
+        EnhancedFakeip = "FakeIP"
+        EnhancedMapping = "Mapping"
+        Servers = "DNS Servers"
+        ServersHint = "e.g.: 8.8.8.8, tls://dns.google"
+        Fallback = "Fallback DNS"
+        FallbackHint = "e.g.: 1.1.1.1"
+        Default = "Default DNS"
+        DefaultHint = "For resolving DNS server domains"
+        FakeipFilter = "FakeIP Filter"
+        FakeipFilterHint = "e.g.: +.lan, localhost"
+        FakeipFilterMode = "FakeIP Filter Mode"
+        FakeipBlacklist = "Blacklist"
+        FakeipWhitelist = "Whitelist"
+        FallbackGeoip = "GeoIP Fallback"
+        FallbackGeoipCode = "GeoIP Code"
+        FallbackGeoipCodeHint = "e.g.: CN"
+        FallbackDomain = "Domain Fallback"
+        FallbackDomainHint = "e.g.: +.google.com"
+        FallbackIpcidr = "IP CIDR Fallback"
+        FallbackIpcidrHint = "e.g.: 240.0.0.0/4"
+        NameserverPolicy = "Nameserver Policy"
+        NameserverPolicyKey = "Domain match rule"
+        NameserverPolicyValue = "DNS server"
+    }
+    
+    ResetDialog = {
+        Title = "Reset Override Settings"
+        Message = "All override settings will be erased. Are you sure you want to continue?"
+    }
+}

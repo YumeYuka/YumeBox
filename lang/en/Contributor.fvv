@@ -1,0 +1,14 @@
+<Contributor Page>
+Contributor = {
+    Title = "Contributors"
+    Description = "Thanks to the following contributors for their help in developing YumeBox (in no particular order) "
+    
+    Section = {
+        SpecialThanks = "Special Thanks"
+        Community = "OOM.WG. && Ave Mujica"
+    }
+    
+    Contributors = {
+        ChenzyadbRole = "Former APP icon design & style guidance"
+    }
+}

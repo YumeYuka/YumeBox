@@ -1,0 +1,31 @@
+<Traffic Statistics Page>
+TrafficStatistics = {
+    Title = "Traffic Statistics"
+    
+    TimeRange = {
+        Today = "Today"
+        Week = "This Week"
+    }
+    
+    Summary = {
+        TodayTraffic = "Today's Traffic"
+        WeekTraffic = "This Week's Traffic"
+    }
+    
+    Compare = {
+        MoreThanYesterday = "vs yesterday +%s"
+        LessThanYesterday = "vs yesterday %s"
+        SameAsYesterday = "Same as yesterday"
+        WeekStats = "Last 7 days stats"
+    }
+    
+    ProfileUsage = {
+        Section = "Profile Traffic Statistics"
+        Empty = "No profile traffic data"
+    }
+    
+    Chart = {
+        Hourly = "4 Hours"
+        Daily = "Daily"
+    }
+}

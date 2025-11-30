@@ -1,0 +1,35 @@
+<Profiles ViewModel>
+ProfilesVM = {
+    Message = {
+        ProfileAdded = "Profile added: %s"
+        AddFailed = "Add profile failed: %s"
+        ProfileDeleted = "Profile deleted"
+        DeleteFailed = "Delete profile failed: %s"
+        ProfileUpdated = "Profile updated: %s"
+        UpdateFailed = "Update profile failed: %s"
+        SubscriptionUpdated = "Subscription info updated"
+        SubscriptionUpdateFailed = "Update subscription failed: %s"
+        RenewNotImplemented = "Renewal feature not implemented"
+        ToggleFailed = "Toggle state failed: %s"
+        ProfileImported = "Profile imported: %s"
+        ImportFailed = "Import profile failed: %s"
+    }
+    
+    Progress = {
+        Preparing = "Preparing download..."
+        DownloadComplete = "Download complete"
+        DownloadFailed = "Download failed: %s"
+        ImportPreparing = "Preparing to import file..."
+        CopyingFile = "Copying file..."
+        Verifying = "Verifying configuration..."
+        ImportComplete = "Import complete"
+        ImportFailed = "Import failed: %s"
+    }
+    
+    Error = {
+        OnlyUrlOrFile = "Only URL or local file types need download"
+        EmptyUrl = "Subscription URL is empty, cannot download"
+        CannotReadFile = "Cannot read file"
+        ProfileNotExist = "Profile does not exist"
+    }
+}

@@ -1,0 +1,34 @@
+<Home Page>
+Home = {
+    Message = {
+        ConfigSwitched = "配置已切换"
+        ConfigSwitchFailed = "配置切换失败: %s"
+        Preparing = "正在准备..."
+        StartFailed = "启动失败: %s"
+        ProxyStopped = "代理服务已停止"
+        StopFailed = "停止失败: %s"
+    }
+    
+    Loading = {
+        Starting = "启动中..."
+    }
+    
+    Control = {
+        Stop = "停止"
+        Start = "启动"
+        HintAddProfile = "请先添加配置文件"
+        HintEnableProfile = "请先在「配置」页面启用一个配置"
+    }
+    
+    NodeInfo = {
+        Node = "节点"
+        Delay = "延迟"
+    }
+    
+    IpInfo = {
+        ExitIp = "出口 IP"
+        Loading = "获取中..."
+        Failed = "获取失败"
+        NotFetched = "未获取"
+    }
+}

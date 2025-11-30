@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+  <settings default="Yume">
+    <module2copyright>
+      <element module="YumeBox" copyright="Yume" />
+    </module2copyright>
+  </settings>
+</component>

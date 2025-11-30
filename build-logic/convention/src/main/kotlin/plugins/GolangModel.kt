@@ -1,0 +1,66 @@
+/*
+ * This file is part of YumeBox.
+ *
+ * YumeBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) YumeYuka & YumeLira 2025.
+ *
+ */
+
+package plugins
+
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+
+abstract class GolangExtension {
+    abstract val sourceDir: DirectoryProperty
+    abstract val outputDir: DirectoryProperty
+    abstract val architectures: MapProperty<String, String>
+    abstract val buildTags: ListProperty<String>
+    abstract val buildFlags: ListProperty<String>
+
+    companion object {
+        val DEFAULT_ARCHITECTURES = mapOf(
+            "armeabi-v7a" to "arm",
+            "arm64-v8a" to "arm64",
+            "x86" to "386",
+            "x86_64" to "amd64",
+        )
+        val DEFAULT_BUILD_TAGS = listOf("with_gvisor", "cmfa")
+        val DEFAULT_BUILD_FLAGS = listOf("-v", "-trimpath", "-ldflags=-s -w -buildid=")
+    }
+}
+
+object GolangUtils {
+    fun getGoBinary(): String = System.getenv("GO_EXECUTABLE") ?: "go"
+    fun getBuildTimestamp(): String = System.currentTimeMillis().toString()
+    fun getClangPath(ndkDir: String, abi: String): String {
+        val osName = System.getProperty("os.name").lowercase()
+        val host = when {
+            osName.contains("windows") -> "windows-x86_64"
+            osName.contains("mac") || osName.contains("darwin") -> "darwin-x86_64"
+            osName.contains("linux") -> "linux-x86_64"
+            else -> error("Unsupported OS: $osName")
+        }
+        val prefix = when (abi) {
+            "armeabi-v7a" -> "armv7a-linux-androideabi21-clang"
+            "arm64-v8a" -> "aarch64-linux-android21-clang"
+            "x86" -> "i686-linux-android21-clang"
+            "x86_64" -> "x86_64-linux-android21-clang"
+            else -> error("Unsupported ABI: $abi")
+        }
+        return "$ndkDir/toolchains/llvm/prebuilt/$host/bin/$prefix"
+    }
+}

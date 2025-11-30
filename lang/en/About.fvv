@@ -1,0 +1,38 @@
+<About Page>
+About = {
+    Title = "About"
+    
+    App = {
+        Description = "an ordinary box, as ordinary as it can possibly be "
+        VersionLoading = "Loading..."
+        VersionFailed = "Failed to load"
+    }
+    
+    Section = {
+        Developer = "Developer"
+        ProjectLinks = "Project Links"
+        More = "More"
+        License = "License"
+    }
+    
+    Developer = {
+        Name = "YumeYuka"
+        Nick = "三角初华"
+        ContributorTitle = "Contributors"
+    }
+    
+    Link = {
+        Sponsor = "Sponsor"
+        TelegramGroup = "Telegram Group"
+        TelegramChannel = "Telegram Channel"
+    }
+    
+    License = {
+        Libraries = "Libraries"
+        LibrariesSummary = "View all third-party libraries used in this app"
+        AgplName = "GNU Affero General Public License v3.0"
+        AgplDescription = "This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License."
+    }
+
+    Copyright = "© 2025–Present YumeYuka & YumeLira"
+}

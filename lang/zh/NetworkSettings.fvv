@@ -1,0 +1,49 @@
+<Network Settings Page>
+NetworkSettings = {
+    Title = "网络设置"
+    
+    Section = {
+        VpnService = "VPN 服务"
+        VpnOptions = "VPN 服务选项"
+        ProxyOptions = "代理选项"
+    }
+    
+    VpnService = {
+        RouteTrafficTitle = "路由系统流量"
+        RouteTrafficSummary = "选择流量路由方式所有的流量"
+        VpnMode = "VPN 模式"
+        SystemProxy = "系统代理"
+    }
+    
+    VpnOptions = {
+        BypassPrivateTitle = "绕过私有网络"
+        BypassPrivateSummary = "绕过私有网络和本地地址"
+        DnsHijackTitle = "DNS 劫持"
+        DnsHijackSummary = "将所有 DNS 请求重定向到 Clash"
+        AllowBypassTitle = "允许应用绕过"
+        AllowBypassSummary = "允许应用绕过 VPN"
+        EnableIpv6Title = "运行 IPv6"
+        EnableIpv6Summary = "允许通过 VPN 路由 IPv6 流量"
+        SystemProxyTitle = "系统代理"
+        SystemProxySummary = "为非 VPN 应用设置 HTTP 代理"
+    }
+    
+    ProxyOptions = {
+        TunStackTitle = "TUN 协议栈"
+        AccessControlModeTitle = "访问控制模式"
+        AllowAll = "允许所有"
+        AllowSelected = "允许选择"
+        RejectSelected = "拒绝选择"
+        ManageAccessControlTitle = "管理访问控制列表"
+        ManageAccessControlSummary = "为应用和域名配置访问控制规则"
+    }
+    
+    RestartService = {
+        Title = "重启服务以应用设置"
+        Summary = "当前服务正在运行，需要重启以应用新的配置"
+    }
+    
+    Error = {
+        VpnDenied = "VPN权限被拒绝"
+    }
+}

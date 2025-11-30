@@ -1,0 +1,37 @@
+<Access Control Page>
+AccessControl = {
+    Title = "Access Control"
+    
+    Search = {
+        Placeholder = "Search apps..."
+    }
+    
+    AppList = {
+        Title = "App List (%d selected)"
+        Loading = "loading..."
+    }
+    
+    Settings = {
+        Title = "Access Control Settings"
+        ShowSystemApps = "Show System Apps"
+        DescendingOrder = "Descending Order"
+        SortMode = "Sort Mode"
+        SortModeCurrent = "Current: %s"
+        BatchOperation = "Batch Operation"
+        SelectAll = "Select All"
+        DeselectAll = "Deselect All"
+        Invert = "Invert"
+    }
+    
+    SortMode = {
+        PackageName = "Package Name"
+        Label = "App Name"
+        InstallTime = "Install Time"
+        UpdateTime = "Update Time"
+    }
+    
+    Button = {
+        Cancel = "Cancel"
+        Confirm = "Confirm"
+    }
+}

@@ -1,0 +1,35 @@
+<Profiles ViewModel>
+ProfilesVM = {
+    Message = {
+        ProfileAdded = "配置已添加: %s"
+        AddFailed = "添加配置失败: %s"
+        ProfileDeleted = "配置已删除"
+        DeleteFailed = "删除配置失败: %s"
+        ProfileUpdated = "配置已更新: %s"
+        UpdateFailed = "更新配置失败: %s"
+        SubscriptionUpdated = "订阅信息已更新"
+        SubscriptionUpdateFailed = "更新订阅信息失败: %s"
+        RenewNotImplemented = "续费功能待实现"
+        ToggleFailed = "切换状态失败: %s"
+        ProfileImported = "配置已导入: %s"
+        ImportFailed = "导入配置失败: %s"
+    }
+    
+    Progress = {
+        Preparing = "准备下载..."
+        DownloadComplete = "下载完成"
+        DownloadFailed = "下载失败: %s"
+        ImportPreparing = "准备导入文件..."
+        CopyingFile = "正在复制文件..."
+        Verifying = "正在验证配置..."
+        ImportComplete = "导入完成"
+        ImportFailed = "导入失败: %s"
+    }
+    
+    Error = {
+        OnlyUrlOrFile = "只有 URL 或 本地文件 类型的配置才需要下载"
+        EmptyUrl = "订阅链接为空，无法下载"
+        CannotReadFile = "无法读取文件"
+        ProfileNotExist = "配置不存在"
+    }
+}

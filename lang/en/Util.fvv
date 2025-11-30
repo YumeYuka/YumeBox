@@ -1,0 +1,21 @@
+<Util>
+Util = {
+    Profile = {
+        Preparing = "Preparing to load profile..."
+        Loading = "Loading profile..."
+        Parsing = "Parsing profile..."
+        LoadComplete = "Load complete"
+        DownloadPreparing = "Preparing to download profile..."
+        FetchingConfig = "Downloading configuration file..."
+        FetchingProviders = "Updating external resources..."
+        Verifying = "Verifying configuration..."
+        ReadingConfig = "Reading configuration file..."
+        NotExist = "Profile does not exist: %s"
+        NoCurrent = "No current profile"
+        DirError = "Unable to get profile directory"
+    }
+    
+    State = {
+        Preparing = "Preparing..."
+    }
+}

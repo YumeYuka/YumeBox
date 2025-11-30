@@ -1,0 +1,34 @@
+<Home Page>
+Home = {
+    Message = {
+        ConfigSwitched = "Config switched"
+        ConfigSwitchFailed = "Config switch failed: %s"
+        Preparing = "Preparing..."
+        StartFailed = "Start failed: %s"
+        ProxyStopped = "Proxy service stopped"
+        StopFailed = "Stop failed: %s"
+    }
+    
+    Loading = {
+        Starting = "Starting..."
+    }
+    
+    Control = {
+        Stop = "Stop"
+        Start = "Start"
+        HintAddProfile = "Please add a profile first"
+        HintEnableProfile = "Please enable a profile in Config page first"
+    }
+    
+    NodeInfo = {
+        Node = "Node"
+        Delay = "Delay"
+    }
+    
+    IpInfo = {
+        ExitIp = "Exit IP"
+        Loading = "Fetching..."
+        Failed = "Failed"
+        NotFetched = "Not fetched"
+    }
+}

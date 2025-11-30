@@ -1,0 +1,14 @@
+<Contributor Page>
+Contributor = {
+    Title = "贡献者"
+    Description = "感谢以下贡献者为 YumeBox 的开发提供了不同程度的帮助(排名顺序不分先后) "
+    
+    Section = {
+        SpecialThanks = "特别感谢"
+        Community = "OOM.WG. && Ave Mujica"
+    }
+    
+    Contributors = {
+        ChenzyadbRole = "前 APP 图标绘制 & 风格指导"
+    }
+}

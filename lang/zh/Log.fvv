@@ -1,0 +1,32 @@
+<Log Page>
+Log = {
+    Title = "日志"
+    
+    Action = {
+        StopRecording = "停止记录"
+        StartRecording = "开始记录"
+        ClearLogs = "清空日志"
+        Pause = "暂停记录"
+        Save = "保存"
+        Delete = "删除"
+    }
+    
+    Empty = {
+        NoLogs = "暂无日志记录"
+        Hint = "点击右上角开始记录日志"
+    }
+    
+    Status = {
+        Recording = "记录中"
+    }
+    
+    Detail = {
+        RealTimeLog = "实时日志"
+        Loading = "加载中..."
+        WaitingLog = "等待日志..."
+        LogEmpty = "日志为空"
+        WillShowWhenGenerated = "日志将在产生时显示"
+        NoLogContent = "该文件没有日志内容"
+        Done = "完成"
+    }
+}

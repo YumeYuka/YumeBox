@@ -1,0 +1,91 @@
+<Override Page>
+Override = {
+    Title = "覆写设置"
+    
+    Section = {
+        General = "通用"
+        AuthHosts = "认证与Hosts"
+        ExternalController = "外部控制器"
+        Dns = "DNS"
+    }
+    
+    General = {
+        HttpPort = "HTTP 端口"
+        SocksPort = "SOCKS 端口"
+        MixedPort = "Mixed 端口"
+        RedirectPort = "Redirect 端口"
+        TproxyPort = "TProxy 端口"
+        AllowLan = "允许局域网"
+        Ipv6 = "IPv6"
+        ProxyMode = "代理模式"
+        ProxyModeNotModify = "不修改"
+        ProxyModeDirect = "直连"
+        ProxyModeGlobal = "全局"
+        ProxyModeRule = "规则"
+        LogLevel = "日志等级"
+    }
+    
+    AuthHosts = {
+        Authentication = "认证信息"
+        AuthenticationHint = "格式: user:password"
+        HostsMapping = "Hosts 映射"
+        HostsKeyHint = "域名"
+        HostsValueHint = "IP地址"
+    }
+    
+    ExternalController = {
+        Address = "控制器地址"
+        AddressHint = "例如: 127.0.0.1:9090"
+        Tls = "TLS 控制器地址"
+        TlsHint = "例如: 127.0.0.1:9443"
+        ApiSecret = "API 密钥"
+        ApiSecretHint = "留空表示不修改"
+        CorsAllowOrigins = "CORS 允许来源"
+        CorsAllowOriginsHint = "例如: http://localhost:9090"
+        CorsAllowPrivate = "允许私有网络"
+    }
+    
+    Dns = {
+        Policy = "DNS 策略"
+        PolicyNotModify = "不修改"
+        PolicyForceEnable = "强制启用"
+        PolicyUseBuiltin = "使用内置"
+        PreferH3 = "优先 HTTP/3"
+        Listen = "监听地址"
+        ListenHint = "例如: 0.0.0.0:53"
+        Ipv6 = "DNS IPv6"
+        UseHosts = "使用 hosts"
+        AppendSystem = "追加系统 DNS"
+        EnhancedMode = "增强模式"
+        EnhancedNotModify = "不修改"
+        EnhancedDisable = "禁用"
+        EnhancedFakeip = "FakeIP"
+        EnhancedMapping = "Mapping"
+        Servers = "DNS 服务器"
+        ServersHint = "例如: 8.8.8.8, tls://dns.google"
+        Fallback = "备用 DNS"
+        FallbackHint = "例如: 1.1.1.1"
+        Default = "默认 DNS"
+        DefaultHint = "用于解析 DNS 服务器域名"
+        FakeipFilter = "FakeIP 过滤"
+        FakeipFilterHint = "例如: +.lan, localhost"
+        FakeipFilterMode = "FakeIP 过滤模式"
+        FakeipBlacklist = "黑名单"
+        FakeipWhitelist = "白名单"
+        FallbackGeoip = "GeoIP Fallback"
+        FallbackGeoipCode = "GeoIP 代码"
+        FallbackGeoipCodeHint = "例如: CN"
+        FallbackDomain = "域名回退"
+        FallbackDomainHint = "例如: +.google.com"
+        FallbackIpcidr = "IP CIDR 回退"
+        FallbackIpcidrHint = "例如: 240.0.0.0/4"
+        NameserverPolicy = "DNS 策略"
+        NameserverPolicyKey = "域名匹配规则"
+        NameserverPolicyValue = "DNS服务器"
+    }
+    
+    ResetDialog = {
+        Title = "重置覆写设置"
+        Message = "所有的覆写设置将会被擦除，确定要继续吗？"
+    }
+}

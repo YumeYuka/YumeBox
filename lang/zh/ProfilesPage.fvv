@@ -1,0 +1,73 @@
+<Profiles Page>
+ProfilesPage = {
+    Title = "配置"
+    
+    Action = {
+        UpdateAll = "一键更新所有"
+        AddProfile = "添加配置"
+        ExportConfig = "导出配置"
+    }
+    
+    Empty = {
+        NoProfiles = "暂无配置文件"
+        Hint = "点击右上角添加配置"
+    }
+    
+    Sheet = {
+        AddTitle = "添加配置文件"
+        EditTitle = "编辑配置文件"
+    }
+    
+    Type = {
+        Title = "配置类型"
+        Subscription = "订阅链接"
+        LocalFile = "本地文件"
+        QrScan = "扫码添加"
+    }
+    
+    Input = {
+        ProfileName = "配置名称"
+        SubscriptionUrl = "订阅链接 (HTTP/HTTPS)"
+        SelectFile = "点击选择文件"
+        NewProfile = "新配置"
+    }
+    
+    QrScanner = {
+        NeedPermission = "需要相机权限"
+        GrantPermission = "授予权限"
+        NeedCamera = "需要相机权限才能扫码"
+        SelectFromAlbum = "从相册选择二维码图片"
+        ScanSuccess = "扫描成功"
+        RecognizeSuccess = "识别成功"
+        RecognizeFailed = "未能识别到二维码"
+        RecognizeError = "识别失败: %s"
+    }
+    
+    Message = {
+        UrlImported = "已从链接导入配置"
+        ClipboardRead = "已从剪贴板读取链接"
+        UnknownFile = "未知文件"
+    }
+    
+    Validation = {
+        EnterUrl = "请输入链接"
+        SelectFile = "请选择文件"
+        YamlOnly = "仅支持 .yaml 或 .yml 格式的配置文件"
+        DownloadFailed = "配置下载失败，请重试"
+    }
+    
+    Progress = {
+        Downloading = "下载中..."
+    }
+    
+    Button = {
+        Cancel = "取消"
+        Confirm = "确定"
+    }
+    
+    DeleteDialog = {
+        Title = "删除配置"
+        Message = "确定要删除「%s」吗？"
+        Confirm = "删除"
+    }
+}

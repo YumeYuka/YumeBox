@@ -1,0 +1,32 @@
+<Settings Page>
+Settings = {
+    Title = "Settings"
+    
+    Section = {
+        UiSettings = "UI Settings"
+        Function = "Function"
+        More = "More"
+    }
+    
+    UiSettings = {
+        App = "App"
+        Network = "Network"
+        Override = "Override"
+        MetaFeatures = "Meta Features"
+    }
+    
+    Function = {
+        SubStore = "SubStore"
+        FeatureManagement = "Feature Management"
+    }
+    
+    More = {
+        TrafficStatistics = "Traffic Statistics"
+        Logs = "Logs"
+        About = "About"
+    }
+    
+    Error = {
+        WebviewFailed = "Unable to open WebView: %s"
+    }
+}

@@ -1,0 +1,75 @@
+<Meta Feature Page>
+MetaFeature = {
+    Title = "Meta 功能"
+    
+    Section = {
+        CoreSettings = "核心设置"
+        Sniffer = "嗅探器"
+        GeoXFiles = "GeoX 文件"
+    }
+    
+    Core = {
+        UnifiedDelayTitle = "统一延迟"
+        UnifiedDelaySummary = "使用统一的延迟测试方式"
+        GeodataModeTitle = "Geodata 模式"
+        GeodataModeSummary = "使用 dat 格式的 GeoIP/GeoSite"
+        TcpConcurrentTitle = "TCP 并发"
+        TcpConcurrentSummary = "启用 TCP 并发连接"
+        FindProcessModeTitle = "进程匹配模式"
+        FindProcessNotModify = "不修改"
+        FindProcessOff = "关闭"
+        FindProcessStrict = "严格"
+        FindProcessAlways = "始终"
+    }
+    
+    Sniffer = {
+        EnableTitle = "嗅探策略"
+        EnableNotModify = "不修改"
+        EnableOn = "启用"
+        EnableOff = "禁用"
+        HttpPorts = "HTTP 嗅探端口"
+        HttpPortsHint = "例如: 80, 8080-8880"
+        HttpOverride = "HTTP 覆盖目标"
+        TlsPorts = "TLS 嗅探端口"
+        TlsPortsHint = "例如: 443, 8443"
+        TlsOverride = "TLS 覆盖目标"
+        QuicPorts = "QUIC 嗅探端口"
+        QuicPortsHint = "例如: 443"
+        QuicOverride = "QUIC 覆盖目标"
+        ForceDnsMapping = "强制 DNS 映射"
+        ParsePureIp = "解析纯 IP"
+        OverrideDestination = "覆盖目标地址"
+        ForceDomain = "强制嗅探域名"
+        ForceDomainHint = "例如: +.google.com"
+        SkipDomain = "跳过嗅探域名"
+        SkipDomainHint = "例如: +.baidu.com"
+        SkipSrcAddress = "跳过源地址"
+        SkipSrcAddressHint = "例如: 192.168.0.0/16"
+        SkipDstAddress = "跳过目标地址"
+        SkipDstAddressHint = "例如: 10.0.0.0/8"
+    }
+    
+    GeoX = {
+        ImportGeoipTitle = "导入 GeoIP 文件"
+        ImportGeoipSummary = "导入自定义 GeoIP 数据库"
+        ImportGeositeTitle = "导入 GeoSite 文件"
+        ImportGeositeSummary = "导入自定义 GeoSite 数据库"
+        ImportCountryTitle = "导入 Country 文件"
+        ImportCountrySummary = "导入自定义 Country.mmdb 数据库"
+        ImportAsnTitle = "导入 ASN 文件"
+        ImportAsnSummary = "导入自定义 ASN 数据库"
+        ImportModelTitle = "导入 Model 文件"
+        ImportModelSummary = "导入自定义 Model 数据库"
+    }
+    
+    Message = {
+        Imported = "已导入: %s"
+        ImportFailed = "导入失败: %s"
+        UnsupportedFormat = "不支持的文件格式，请选择 %s"
+    }
+    
+    ResetDialog = {
+        Title = "重置 Meta 功能设置"
+        Message = "所有的 Meta 功能覆写设置将会被擦除，确定要继续吗？"
+    }
+}

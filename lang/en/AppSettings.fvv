@@ -1,0 +1,73 @@
+<App Settings Page>
+AppSettings = {
+    Title = "App Settings"
+    
+    Section = {
+        Behavior = "Behavior"
+        Home = "Home"
+        Interface = "Interface"
+        Service = "Service"
+        Language = "Language"
+    }
+    
+    Behavior = {
+        AutoStartTitle = "Auto Start"
+        AutoStartSummary = "Automatically start proxy service on app launch and boot"
+        OneChinaTitle = "One-China Policy"
+        OneChinaSummary = "Automatically display HK/MO/TW region flags and codes as China"
+    }
+    
+    Home = {
+        OneWordTitle = "Quote"
+        OneWordAuthorTitle = "Author"
+    }
+    
+    Interface = {
+        ThemeModeTitle = "Theme Mode"
+        ThemeModeSummary = "Select the app's theme style"
+        ThemeModeSystem = "Follow System"
+        ThemeModeLight = "Light"
+        ThemeModeDark = "Dark"
+        
+        ColorThemeTitle = "Color Theme"
+        ColorThemeSummary = "Select brand color style, default is minimal black & white"
+        ColorMinimal = "Minimal B&W"
+        ColorClassic = "Classic"
+        ColorOcean = "Ocean Song"
+        ColorFresh = "Morning Dew"
+        ColorPrincess = "Little Princess"
+        ColorMystery = "Mysterious World"
+        ColorGolden = "Golden Time"
+        
+        FloatingNavbarTitle = "Floating Navbar"
+        FloatingNavbarSummary = "Use floating style bottom navigation bar"
+        
+        ShowDividerTitle = "Show Dividers"
+        ShowDividerSummary = "Show dividers between list items"
+        
+        HideIconTitle = "Hide App Icon"
+        HideIconSummary = "After hiding, you can open via dialer *#*#0721#*#*"
+        
+        LanguageTitle = "Language"
+        LanguageSummary = "Select app display language"
+        LanguageSystem = "Follow System"
+        LanguageZh = "简体中文"
+        LanguageEn = "English"
+    }
+    
+    ServiceSection = {
+        TrafficNotificationTitle = "Show Traffic Notification"
+        TrafficNotificationSummary = "Display traffic usage in notification bar"
+    }
+    
+    WarningDialog = {
+        Title = "Warning"
+        HideIconMsg1 = "Please make sure you can access this app's settings before hiding!"
+        HideIconMsg2 = "For HyperOS, please enable Auto-start and Background Pop-up permissions to receive dialer codes!"
+    }
+    
+    EditDialog = {
+        OneWordTitle = "Edit Quote"
+        AuthorTitle = "Edit Author"
+    }
+}

@@ -1,0 +1,40 @@
+<Service>
+Service = {
+    Notification = {
+        ChannelDescription = "Display Clash service running status"
+        ActionDisconnect = "Disconnect"
+        ConnectedWithProfile = "Connected: %s"
+        Connected = "Connected"
+        TrafficFormat = "Total: %s"
+    }
+    
+    Status = {
+        Connecting = "Connecting..."
+        Establishing = "Establishing connection"
+        StartingProxy = "Starting proxy"
+        StartFailed = "Start failed"
+        ConfigLoadFailed = "Config load failed"
+        VpnEstablishFailed = "Unable to establish VPN connection"
+        HttpProxyStartFailed = "Unable to start HTTP proxy"
+        UnknownError = "Unknown error"
+    }
+    
+    Tile = {
+        Connected = "Connected"
+        Disconnected = "Disconnected"
+        Connecting = "Connecting..."
+        Disconnecting = "Disconnecting..."
+        Unconfigured = "Unconfigured"
+        ClickToOpen = "Click to open app"
+        ModeVpn = "VPN Mode"
+        ModeHttp = "HTTP Mode"
+    }
+    
+    LogRecord = {
+        ChannelName = "Log Recording"
+        ChannelDescription = "Log recording service notification"
+        Recording = "Recording logs"
+        RecordingFile = "Recording logs..."
+        ActionStop = "Stop"
+    }
+}

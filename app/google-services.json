@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "699486130516",
+    "project_id": "yumebox-5edc1",
+    "storage_bucket": "yumebox-5edc1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699486130516:android:27a01f099b7143362eb8c1",
+        "android_client_info": {
+          "package_name": "plus.yumeyuka.yumebox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJR0ofGBPYkYl_EttrAdJjBCawLTLw1RI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

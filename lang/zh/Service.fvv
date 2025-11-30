@@ -1,0 +1,40 @@
+<Service>
+Service = {
+    Notification = {
+        ChannelDescription = "显示 Clash 服务运行状态"
+        ActionDisconnect = "断开"
+        ConnectedWithProfile = "已连接: %s"
+        Connected = "已连接"
+        TrafficFormat = "总计: %s"
+    }
+    
+    Status = {
+        Connecting = "正在连接..."
+        Establishing = "正在建立连接"
+        StartingProxy = "正在启动代理"
+        StartFailed = "启动失败"
+        ConfigLoadFailed = "配置加载失败"
+        VpnEstablishFailed = "无法建立 VPN 连接"
+        HttpProxyStartFailed = "无法启动 HTTP 代理"
+        UnknownError = "未知错误"
+    }
+    
+    Tile = {
+        Connected = "已连接"
+        Disconnected = "已断开"
+        Connecting = "连接中..."
+        Disconnecting = "断开中..."
+        Unconfigured = "未配置"
+        ClickToOpen = "点击打开应用"
+        ModeVpn = "VPN 模式"
+        ModeHttp = "HTTP 模式"
+    }
+    
+    LogRecord = {
+        ChannelName = "日志记录"
+        ChannelDescription = "日志记录服务通知"
+        Recording = "正在记录日志"
+        RecordingFile = "日志记录中..."
+        ActionStop = "停止"
+    }
+}

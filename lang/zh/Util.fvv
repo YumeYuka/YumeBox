@@ -1,0 +1,21 @@
+<Util>
+Util = {
+    Profile = {
+        Preparing = "准备加载配置..."
+        Loading = "正在加载配置..."
+        Parsing = "正在解析配置..."
+        LoadComplete = "加载完成"
+        DownloadPreparing = "准备下载配置..."
+        FetchingConfig = "正在下载配置文件..."
+        FetchingProviders = "正在更新外部资源..."
+        Verifying = "正在验证配置..."
+        ReadingConfig = "正在读取配置文件..."
+        NotExist = "配置文件不存在: %s"
+        NoCurrent = "没有当前配置"
+        DirError = "无法获取配置目录"
+    }
+    
+    State = {
+        Preparing = "正在准备..."
+    }
+}

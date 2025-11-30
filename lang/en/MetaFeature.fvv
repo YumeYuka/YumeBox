@@ -1,0 +1,75 @@
+<Meta Feature Page>
+MetaFeature = {
+    Title = "Meta Features"
+    
+    Section = {
+        CoreSettings = "Core Settings"
+        Sniffer = "Sniffer"
+        GeoXFiles = "GeoX Files"
+    }
+    
+    Core = {
+        UnifiedDelayTitle = "Unified Delay"
+        UnifiedDelaySummary = "Use unified delay testing method"
+        GeodataModeTitle = "Geodata Mode"
+        GeodataModeSummary = "Use dat format for GeoIP/GeoSite"
+        TcpConcurrentTitle = "TCP Concurrent"
+        TcpConcurrentSummary = "Enable TCP concurrent connections"
+        FindProcessModeTitle = "Process Matching Mode"
+        FindProcessNotModify = "Don't Modify"
+        FindProcessOff = "Off"
+        FindProcessStrict = "Strict"
+        FindProcessAlways = "Always"
+    }
+    
+    Sniffer = {
+        EnableTitle = "Sniffing Policy"
+        EnableNotModify = "Don't Modify"
+        EnableOn = "Enable"
+        EnableOff = "Disable"
+        HttpPorts = "HTTP Sniffing Ports"
+        HttpPortsHint = "e.g.: 80, 8080-8880"
+        HttpOverride = "HTTP Override Destination"
+        TlsPorts = "TLS Sniffing Ports"
+        TlsPortsHint = "e.g.: 443, 8443"
+        TlsOverride = "TLS Override Destination"
+        QuicPorts = "QUIC Sniffing Ports"
+        QuicPortsHint = "e.g.: 443"
+        QuicOverride = "QUIC Override Destination"
+        ForceDnsMapping = "Force DNS Mapping"
+        ParsePureIp = "Parse Pure IP"
+        OverrideDestination = "Override Destination"
+        ForceDomain = "Force Sniff Domains"
+        ForceDomainHint = "e.g.: +.google.com"
+        SkipDomain = "Skip Sniff Domains"
+        SkipDomainHint = "e.g.: +.baidu.com"
+        SkipSrcAddress = "Skip Source Address"
+        SkipSrcAddressHint = "e.g.: 192.168.0.0/16"
+        SkipDstAddress = "Skip Destination Address"
+        SkipDstAddressHint = "e.g.: 10.0.0.0/8"
+    }
+    
+    GeoX = {
+        ImportGeoipTitle = "Import GeoIP File"
+        ImportGeoipSummary = "Import custom GeoIP database"
+        ImportGeositeTitle = "Import GeoSite File"
+        ImportGeositeSummary = "Import custom GeoSite database"
+        ImportCountryTitle = "Import Country File"
+        ImportCountrySummary = "Import custom Country.mmdb database"
+        ImportAsnTitle = "Import ASN File"
+        ImportAsnSummary = "Import custom ASN database"
+        ImportModelTitle = "Import Model file"
+        ImportModelSummary = "Import Custom Model Database"
+    }
+    
+    Message = {
+        Imported = "Imported: %s"
+        ImportFailed = "Import failed: %s"
+        UnsupportedFormat = "Unsupported file format, please select %s"
+    }
+    
+    ResetDialog = {
+        Title = "Reset Meta Feature Settings"
+        Message = "All Meta feature override settings will be erased. Are you sure you want to continue?"
+    }
+}

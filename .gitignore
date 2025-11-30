@@ -1,0 +1,64 @@
+# Build outputs
+**/build/
+**/intermediates/
+**/release
+**/out/
+**/target/
+**/bin/
+**/gen/
+.gradle/
+.kotlin/
+
+# Build artifacts
+*.apk
+*.aar
+*.aab
+*.ap_
+*.dex
+*.class
+
+# IDE - IntelliJ/Android Studio
+.idea/*
+!.idea/codeStyles/
+!.idea/copyright/
+*.iml
+.navigation/
+captures/
+
+# Native build
+.cxx/
+.externalNativeBuild/
+cmake-build-*/
+*.so
+*.a
+*.o
+*.obj
+
+# Signing & secrets
+*.jks
+*.keystore
+release.keystore
+signing.properties
+local.properties
+.env
+.env.local
+.env.*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# Logs & temp
+*.log
+*.tmp
+*.hprof
+
+# Project specific
+/app/src/androidMain/assets/
+/core/src/foss/golang/mihomo/
+/.claude
+/.qoder
+/app/release/
+/app/build/

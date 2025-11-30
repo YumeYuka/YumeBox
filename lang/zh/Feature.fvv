@@ -1,0 +1,64 @@
+<Feature Page>
+Feature = {
+    Title = "功能管理"
+    
+    ServiceStatus = {
+        Section = "服务状态"
+        Running = "服务运行中: %s"
+        NeedExtension = "需要安装扩展包"
+        NeedSubStore = "需要下载 SubStore 资源"
+        NotRunning = "服务未运行"
+        SwitchStartSubStore = "启动 SubStore 服务"
+        AllowLan = "允许局域网访问"
+        AllowLanSummary = "允许局域网设备访问 SubStore"
+        AutoCloseMode = "自动关闭模式"
+        AutoCloseModeSummary = "自动关闭时间，长时间运行将消耗更多性能"
+        AutoCloseModeAlwaysOn = "常开"
+        AutoCloseMode5Min = "5分钟"
+        AutoCloseMode10Min = "10分钟"
+        AutoClosed = "SubStore 已自动关闭"
+        AutoCloseModeDisabled = "禁用"
+    }
+    
+    Panel = {
+        Section = "面板选择"
+        SelectPanel = "选择面板"
+        Installed = "已安装"
+        NotInstalled = "未安装"
+        Unknown = "未知面板"
+        Download = "下载面板"
+        Redownload = "重新下载面板"
+        Downloading = "下载中..."
+        WillOverwrite = "（已安装，将覆盖现有文件）"
+        NotInstalledHint = "（未安装）"
+    }
+    
+    SubStore = {
+        SectionHint = "SubStore 资源下载,需要同时安装扩展包和静态资源,首次安装扩展包之后,请退出应用再打开"
+        ExtensionInstalled = "扩展包已安装"
+        ExtensionInstall = "安装扩展包"
+        JavetAvailable = "Javet 库可用，点击刷新状态"
+        JavetPending = "扩展包已安装，Javet 库待提取，点击刷新状态"
+        DownloadHint = "点击前往下载扩展包"
+        DownloadResources = "下载资源"
+        DownloadResourcesSummary = "一次性下载前端和后端资源"
+        Not32Bit = "SubStore不支持32位设备"
+        InstallExtension = "请先安装扩展包"
+        DownloadSubStoreFirst = "请先下载 SubStore 资源"
+        JavetNotReady = "Javet 库未就绪，请确保扩展包已正确安装"
+        FeatureNotAvailable = "此功能暂不可用"
+        FrontendDownloadSuccess = "SubStore 前端下载完成"
+        FrontendDownloadFailed = "SubStore 前端下载失败"
+        BackendDownloadSuccess = "SubStore 后端下载完成"
+        BackendDownloadFailed = "SubStore 后端下载失败"
+        ToolDownloadSuccess = "%s 下载完成"
+        ToolDownloadFailed = "%s 下载失败"
+        DownloadError = "下载出错: %s"
+        InvalidPanelType = "无效的面板类型"
+        PanelInstallSuccess = "%s 下载安装成功"
+        PanelInstallFailed = "%s 下载安装失败"
+        PanelInstallError = "下载安装出错: %s"
+        Zashboard = "Zashboard"
+        OfficialPanel = "SubStore 官方面板"
+    }
+}

@@ -1,0 +1,27 @@
+<Providers Page>
+Providers = {
+    Title = "External Resources"
+    
+    Action = {
+        UpdateAll = "Update All"
+    }
+    
+    Empty = {
+        NotRunning = "Proxy not running"
+        NotRunningHint = "Please start proxy service to view external resources"
+        NoProviders = "No external resources"
+        NoProvidersHint = "Current profile doesn't contain external resources"
+    }
+    
+    Type = {
+        ProxyProviders = "Proxy Providers (%d)"
+        RuleProviders = "Rule Providers (%d)"
+    }
+    
+    Message = {
+        FetchFailed = "Failed to fetch resources: %s"
+        UpdateSuccess = "%s updated successfully"
+        UpdateFailed = "Update failed: %s"
+        AllUpdated = "All updated"
+    }
+}

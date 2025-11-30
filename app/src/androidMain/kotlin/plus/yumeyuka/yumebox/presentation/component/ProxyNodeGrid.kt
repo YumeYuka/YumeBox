@@ -1,0 +1,68 @@
+/*
+ * This file is part of YumeBox.
+ *
+ * YumeBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) YumeYuka & YumeLira 2025.
+ *
+ */
+
+package plus.yumeyuka.yumebox.presentation.component
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import plus.yumeyuka.yumebox.core.model.Proxy
+import plus.yumeyuka.yumebox.domain.model.ProxyDisplayMode
+
+@Composable
+fun ProxyNodeGrid(
+    proxies: List<Proxy>,
+    selectedProxyName: String,
+    displayMode: ProxyDisplayMode,
+    onProxyClick: (Proxy) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp)
+) {
+    val columns = if (displayMode.isSingleColumn) 1 else 2
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columns),
+        modifier = modifier,
+        contentPadding = PaddingValues(
+            start = 12.dp,
+            end = 12.dp,
+            top = 12.dp + contentPadding.calculateTopPadding(),
+            bottom = 12.dp + contentPadding.calculateBottomPadding()
+        ),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(proxies) { proxy ->
+            ProxyNodeCard(
+                proxy = proxy,
+                isSelected = proxy.name == selectedProxyName,
+                onClick = { onProxyClick(proxy) },
+                isSingleColumn = displayMode.isSingleColumn,
+                showDetail = displayMode.showDetail
+            )
+        }
+    }
+}
+

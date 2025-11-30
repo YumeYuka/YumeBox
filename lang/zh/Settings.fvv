@@ -1,0 +1,32 @@
+<Settings Page>
+Settings = {
+    Title = "设置"
+    
+    Section = {
+        UiSettings = "界面设置"
+        Function = "功能"
+        More = "更多"
+    }
+    
+    UiSettings = {
+        App = "应用"
+        Network = "网络"
+        Override = "覆写"
+        MetaFeatures = "Meta 功能"
+    }
+    
+    Function = {
+        SubStore = "SubStore"
+        FeatureManagement = "功能管理"
+    }
+    
+    More = {
+        TrafficStatistics = "流量统计"
+        Logs = "日志"
+        About = "关于"
+    }
+    
+    Error = {
+        WebviewFailed = "无法打开 WebView: %s"
+    }
+}

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of YumeBox.
+  ~
+  ~ YumeBox is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <https://www.gnu.org/licenses/>.
+  ~
+  ~ Copyright (c) YumeYuka & YumeLira 2025.
+  ~
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="28"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <application
+            android:name=".App"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="${appName}"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar"
+            android:usesCleartextTraffic="true">
+        <activity
+                android:name=".MainActivity"
+                android:exported="true"
+                android:launchMode="singleTop"
+                android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="clash" android:host="install-config"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="clashmeta" android:host="install-config"/>
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+                android:name=".MainActivityAlias"
+                android:exported="true"
+                android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity
+                android:name=".presentation.webview.WebViewActivity"
+                android:exported="false"
+                android:configChanges="orientation|screenSize|keyboardHidden"
+                android:hardwareAccelerated="true"
+                android:theme="@android:style/Theme.Material.Light.NoActionBar"/>
+
+        <service
+                android:name=".service.ClashVpnService"
+                android:exported="false"
+                android:foregroundServiceType="specialUse"
+                android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService"/>
+            </intent-filter>
+            <property
+                    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="vpn_service"/>
+        </service>
+
+        <service
+                android:name=".service.ClashHttpService"
+                android:exported="false"
+                android:foregroundServiceType="specialUse">
+            <property
+                    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="http_proxy_service"/>
+        </service>
+
+        <service
+                android:name=".service.AutoRestartService"
+                android:exported="false"/>
+
+        <service
+                android:name=".service.DialerLaunchService"
+                android:exported="false"/>
+
+        <service
+                android:name=".service.LogRecordService"
+                android:exported="false"
+                android:foregroundServiceType="specialUse">
+            <property
+                    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="log_record_service"/>
+        </service>
+
+        <service
+                android:name=".substore.SubStoreService"
+                android:exported="false"
+                android:foregroundServiceType="specialUse">
+            <property
+                    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="sub_store_service"/>
+        </service>
+
+        <service
+                android:name=".service.ProxyTileService"
+                android:exported="true"
+                android:label="@string/tile_proxy_label"
+                android:icon="@drawable/ic_logo_service"
+                android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+
+        <!-- DialerReceiver 支持 SECRET_CODE 和 NEW_OUTGOING_CALL -->
+        <receiver
+                android:name=".service.DialerReceiver"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SECRET_CODE"/>
+                <data android:host="0721" android:scheme="android_secret_code"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- 保留 RestartReceiver 来启动自动重启服务 -->
+        <receiver
+                android:name=".service.RestartReceiver"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+                android:name="org.chromium.webapk.shell_apk"
+                android:value=""/>
+        <meta-data
+                android:name="com.android.stamp.type"
+                android:value="STAMP_TYPE_DISTRIBUTION_APK"/>
+        <meta-data
+                android:name="com.android.stamp.source"
+                android:value="https://play.google.com/store"/>
+
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths"/>
+        </provider>
+    </application>
+</manifest>

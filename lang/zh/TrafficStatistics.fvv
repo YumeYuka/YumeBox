@@ -1,0 +1,31 @@
+<Traffic Statistics Page>
+TrafficStatistics = {
+    Title = "流量统计"
+    
+    TimeRange = {
+        Today = "今日"
+        Week = "本周"
+    }
+    
+    Summary = {
+        TodayTraffic = "今日流量"
+        WeekTraffic = "本周流量"
+    }
+    
+    Compare = {
+        MoreThanYesterday = "较昨日 +%s"
+        LessThanYesterday = "较昨日 %s"
+        SameAsYesterday = "与昨日持平"
+        WeekStats = "近7天统计"
+    }
+    
+    ProfileUsage = {
+        Section = "配置流量统计"
+        Empty = "暂无配置流量数据"
+    }
+    
+    Chart = {
+        Hourly = "4小时"
+        Daily = "按天"
+    }
+}

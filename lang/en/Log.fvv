@@ -1,0 +1,32 @@
+<Log Page>
+Log = {
+    Title = "Logs"
+    
+    Action = {
+        StopRecording = "Stop Recording"
+        StartRecording = "Start Recording"
+        ClearLogs = "Clear Logs"
+        Pause = "Pause Recording"
+        Save = "Save"
+        Delete = "Delete"
+    }
+    
+    Empty = {
+        NoLogs = "No log records"
+        Hint = "Click top-right to start recording"
+    }
+    
+    Status = {
+        Recording = "Recording"
+    }
+    
+    Detail = {
+        RealTimeLog = "Real-time Log"
+        Loading = "Loading..."
+        WaitingLog = "Waiting for logs..."
+        LogEmpty = "Log is empty"
+        WillShowWhenGenerated = "Logs will appear when generated"
+        NoLogContent = "This file has no log content"
+        Done = "Done"
+    }
+}

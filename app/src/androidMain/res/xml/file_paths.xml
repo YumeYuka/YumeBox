@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of YumeBox.
+  ~
+  ~ YumeBox is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program. If not, see <https://www.gnu.org/licenses/>.
+  ~
+  ~ Copyright (c) YumeYuka & YumeLira 2025.
+  ~
+  -->
+
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 允许 FileProvider 共享 "cache" 目录中的文件 (用于 APK 安装) -->
+    <cache-path
+            name="cached_files"
+            path="."/>
+
+    <!-- 允许 FileProvider 共享 "external-files" 目录 (用于 Android 9- 的 downloadAndOpenFile) -->
+    <external-files-path
+            name="external_files"
+            path="."/>
+
+    <!-- 允许访问公共Download目录中的YumeBox文件夹 -->
+    <external-path
+            name="public_downloads"
+            path="Download/YumeBox"/>
+
+    <!-- 允许访问内部存储 files/imported 目录 (用于导出配置) -->
+    <files-path
+            name="imported_files"
+            path="imported"/>
+</paths>

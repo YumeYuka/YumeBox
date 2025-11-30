@@ -1,0 +1,70 @@
+<Proxy Page>
+Proxy = {
+    Title = "Nodes"
+    
+    Mode = {
+        Direct = "Direct"
+        Global = "Global"
+        Rule = "Rule"
+        Unknown = "Unknown"
+        Switched = "Switched to: %s mode"
+        SwitchFailed = "Mode switch failed: %s"
+    }
+    
+    Action = {
+        ExternalResources = "External Resources"
+        Panel = "Panel"
+        Test = "Test"
+        Settings = "Settings"
+    }
+    
+    Empty = {
+        NoNodes = "No nodes"
+        Hint = "Please load a profile in Config page"
+    }
+    
+    Testing = {
+        Group = "Testing proxy group: %s"
+        All = "Testing all proxy groups..."
+        RequestSent = "Test request sent"
+        Failed = "Test failed: %s"
+    }
+    
+    Refresh = {
+        Success = "Proxy groups refreshed"
+        Failed = "Refresh failed: %s"
+        Refreshing = "Refreshing..."
+    }
+    
+    PullToRefresh = {
+        PullToTest = "Pull to test delay"
+        ReleaseToTest = "Release to test delay"
+        DelaySuccess = "Delay test successful"
+    }
+    
+    Selection = {
+        Switched = "Switched to: %s"
+        Failed = "Switch failed"
+        Error = "Switch failed: %s"
+    }
+    
+    Settings = {
+        Title = "Display Settings"
+        ProxyMode = "Proxy Mode"
+        SortMode = "Sort Mode"
+        DisplayMode = "Display Mode"
+    }
+    
+    SortMode = {
+        Default = "Default"
+        ByName = "By Name"
+        ByLatency = "By Latency"
+    }
+    
+    DisplayMode = {
+        SingleDetailed = "Single Detailed"
+        SingleSimple = "Single Simple"
+        DoubleDetailed = "Double Detailed"
+        DoubleSimple = "Double Simple"
+    }
+}

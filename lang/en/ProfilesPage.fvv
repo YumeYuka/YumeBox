@@ -1,0 +1,73 @@
+<Profiles Page>
+ProfilesPage = {
+    Title = "Profiles"
+    
+    Action = {
+        UpdateAll = "Update All"
+        AddProfile = "Add Profile"
+        ExportConfig = "Export Config"
+    }
+    
+    Empty = {
+        NoProfiles = "No profiles"
+        Hint = "Click top-right to add profile"
+    }
+    
+    Sheet = {
+        AddTitle = "Add Profile"
+        EditTitle = "Edit Profile"
+    }
+    
+    Type = {
+        Title = "Profile Type"
+        Subscription = "Subscription URL"
+        LocalFile = "Local File"
+        QrScan = "Scan QR Code"
+    }
+    
+    Input = {
+        ProfileName = "Profile Name"
+        SubscriptionUrl = "Subscription URL (HTTP/HTTPS)"
+        SelectFile = "Click to select file"
+        NewProfile = "New Profile"
+    }
+    
+    QrScanner = {
+        NeedPermission = "Camera permission required"
+        GrantPermission = "Grant Permission"
+        NeedCamera = "Camera permission required for scanning"
+        SelectFromAlbum = "Select QR code from album"
+        ScanSuccess = "Scan successful"
+        RecognizeSuccess = "Recognition successful"
+        RecognizeFailed = "Failed to recognize QR code"
+        RecognizeError = "Recognition failed: %s"
+    }
+    
+    Message = {
+        UrlImported = "Profile imported from URL"
+        ClipboardRead = "URL read from clipboard"
+        UnknownFile = "Unknown file"
+    }
+    
+    Validation = {
+        EnterUrl = "Please enter URL"
+        SelectFile = "Please select a file"
+        YamlOnly = "Only .yaml or .yml format supported"
+        DownloadFailed = "Profile download failed, please retry"
+    }
+    
+    Progress = {
+        Downloading = "Downloading..."
+    }
+    
+    Button = {
+        Cancel = "Cancel"
+        Confirm = "Confirm"
+    }
+    
+    DeleteDialog = {
+        Title = "Delete Profile"
+        Message = "Are you sure you want to delete '%s'?"
+        Confirm = "Delete"
+    }
+}

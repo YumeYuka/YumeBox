@@ -1,0 +1,64 @@
+<Feature Page>
+Feature = {
+    Title = "Feature Management"
+    
+    ServiceStatus = {
+        Section = "Service Status"
+        Running = "Service running: %s"
+        NeedExtension = "Extension required"
+        NeedSubStore = "SubStore resources required"
+        NotRunning = "Service not running"
+        SwitchStartSubStore = "Start SubStore Service"
+        AllowLan = "Allow LAN Access"
+        AllowLanSummary = "Allow LAN devices to access SubStore"
+        AutoCloseMode = "Auto Close Mode"
+        AutoCloseModeSummary = "Select service auto close time, long running will consume more performance"
+        AutoCloseModeAlwaysOn = "Always On"
+        AutoCloseMode5Min = "5 minutes"
+        AutoCloseMode10Min = "10 minutes"
+        AutoClosed = "SubStore auto closed"
+        AutoCloseModeDisabled = "Disabled"
+    }
+    
+    Panel = {
+        Section = "Panel Selection"
+        SelectPanel = "Select Panel"
+        Installed = "Installed"
+        NotInstalled = "Not Installed"
+        Unknown = "Unknown Panel"
+        Download = "Download Panel"
+        Redownload = "Re-download Panel"
+        Downloading = "Downloading..."
+        WillOverwrite = "(Installed, will overwrite)"
+        NotInstalledHint = "(Not installed)"
+    }
+    
+    SubStore = {
+        SectionHint = "SubStore resource download, both extension and static resources are required. After installing extension for the first time, please restart the app"
+        ExtensionInstalled = "Extension Installed"
+        ExtensionInstall = "Install Extension"
+        JavetAvailable = "Javet library available, click to refresh status"
+        JavetPending = "Extension installed, Javet pending extraction, click to refresh status"
+        DownloadHint = "Click to download extension"
+        DownloadResources = "Download Resources"
+        DownloadResourcesSummary = "Download frontend and backend resources at once"
+        Not32Bit = "SubStore does not support 32-bit devices"
+        InstallExtension = "Please install extension first"
+        DownloadSubStoreFirst = "Please download SubStore resources first"
+        JavetNotReady = "Javet library not ready, please ensure extension is properly installed"
+        FeatureNotAvailable = "This feature is not available"
+        FrontendDownloadSuccess = "SubStore frontend downloaded"
+        FrontendDownloadFailed = "SubStore frontend download failed"
+        BackendDownloadSuccess = "SubStore backend downloaded"
+        BackendDownloadFailed = "SubStore backend download failed"
+        ToolDownloadSuccess = "%s downloaded"
+        ToolDownloadFailed = "%s download failed"
+        DownloadError = "Download error: %s"
+        InvalidPanelType = "Invalid panel type"
+        PanelInstallSuccess = "%s installed successfully"
+        PanelInstallFailed = "%s installation failed"
+        PanelInstallError = "Installation error: %s"
+        Zashboard = "Zashboard"
+        OfficialPanel = "SubStore Official Panel"
+    }
+}

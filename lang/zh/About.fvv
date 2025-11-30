@@ -1,0 +1,38 @@
+<About Page>
+About = {
+    Title = "关于"
+    
+    App = {
+        Description = "an ordinary box, as ordinary as it can possibly be "
+        VersionLoading = "Loading..."
+        VersionFailed = "Failed to load"
+    }
+    
+    Section = {
+        Developer = "开发者"
+        ProjectLinks = "项目链接"
+        More = "更多"
+        License = "许可证"
+    }
+    
+    Developer = {
+        Name = "梦璃酱"
+        Nick = "三角初华"
+        ContributorTitle = "贡献者"
+    }
+    
+    Link = {
+        Sponsor = "赞助作者"
+        TelegramGroup = "Telegram 群组"
+        TelegramChannel = "Telegram 频道"
+    }
+    
+    License = {
+        Libraries = "引用库"
+        LibrariesSummary = "View all third-party libraries used in this app"
+        AgplName = "GNU Affero General Public License v3.0"
+        AgplDescription = "This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License."
+    }
+
+    Copyright = "© 2025–至今 YumeYuka & YumeLira"
+}

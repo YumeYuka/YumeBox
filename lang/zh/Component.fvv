@@ -1,0 +1,93 @@
+<Components>
+Component = {
+    ProfileCard = {
+        Unsaved = " (未保存)"
+        Export = "导出"
+        Edit = "编辑"
+        Update = "更新"
+        Delete = "删除"
+        RemoteSubscription = "远程订阅"
+        LocalFile = "本地文件"
+        LocalConfig = "本地配置文件"
+        ClickToUpdate = "点击更新获取订阅信息"
+        Traffic = "流量: %s / %s (%d%%)"
+        UsedTraffic = "已用: %s"
+        ExpireAt = "到期: %s (剩余%d天)"
+        ExpireToday = "到期: 今天"
+        Expired = "已过期: %s"
+        JustNow = "刚刚"
+        MinutesAgo = "%d分钟前"
+        HoursAgo = "%d小时前"
+        DaysAgo = "%d天前"
+    }
+    
+    WebView = {
+        InvalidUrl = "无效的 URL"
+        LoadFailed = "无法加载页面文件: index.html 不存在"
+    }
+    
+    Selector = {
+        NotModify = "不修改"
+        Enable = "启用"
+        Disable = "禁用"
+    }
+    
+    Navigation = {
+        Back = "返回"
+        Refresh = "刷新"
+    }
+    
+    Message = {
+        Confirm = "确定"
+        Hint = "提示"
+        Error = "错误"
+        Success = "成功"
+    }
+    
+    Button = {
+        Cancel = "取消"
+        Confirm = "确定"
+        Clear = "清除"
+    }
+    
+    Loading = {
+        Starting = "启动中..."
+    }
+    
+    ConfigInput = {
+        PortLabel = "端口号 (留空表示不修改)"
+        CountItems = "%d 项"
+        KeyPlaceholder = "键"
+        ValuePlaceholder = "值"
+    }
+    
+    BottomBar = {
+        Home = "首页"
+        Proxy = "代理"
+        Config = "配置"
+        Setting = "设置"
+    }
+    
+    Editor = {
+        CountItems = "共 %d 项"
+        Action = {
+            Reset = "重置"
+            Add = "添加"
+            Delete = "删除"
+        }
+        Dialog = {
+            AddTitle = "添加条目"
+            EditTitle = "编辑条目"
+            ResetTitle = "重置确认"
+            ResetMessage = "清空所有条目并恢复为不修改状态？"
+        }
+        Empty = {
+            Title = "暂无条目"
+            Hint = "点击右上角按钮添加"
+        }
+        Error = {
+            KeyEmpty = "键不能为空"
+            KeyExists = "键已存在"
+        }
+    }
+}

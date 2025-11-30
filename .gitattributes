@@ -1,0 +1,21 @@
+* text=auto eol=lf
+
+*.bat text eol=crlf
+
+# Binary files
+*.jar binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.so binary
+*.apk binary
+*.aab binary
+*.keystore binary

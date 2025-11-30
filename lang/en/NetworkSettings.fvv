@@ -1,0 +1,49 @@
+<Network Settings Page>
+NetworkSettings = {
+    Title = "Network Settings"
+    
+    Section = {
+        VpnService = "VPN Service"
+        VpnOptions = "VPN Service Options"
+        ProxyOptions = "Proxy Options"
+    }
+    
+    VpnService = {
+        RouteTrafficTitle = "Route System Traffic"
+        RouteTrafficSummary = "Select traffic routing method for all traffic"
+        VpnMode = "VPN Mode"
+        SystemProxy = "System Proxy"
+    }
+    
+    VpnOptions = {
+        BypassPrivateTitle = "Bypass Private Networks"
+        BypassPrivateSummary = "Bypass private networks and local addresses"
+        DnsHijackTitle = "DNS Hijack"
+        DnsHijackSummary = "Redirect all DNS requests to Clash"
+        AllowBypassTitle = "Allow App Bypass"
+        AllowBypassSummary = "Allow apps to bypass VPN"
+        EnableIpv6Title = "Enable IPv6"
+        EnableIpv6Summary = "Allow IPv6 traffic through VPN"
+        SystemProxyTitle = "System Proxy"
+        SystemProxySummary = "Set HTTP proxy for non-VPN apps"
+    }
+    
+    ProxyOptions = {
+        TunStackTitle = "TUN Stack"
+        AccessControlModeTitle = "Access Control Mode"
+        AllowAll = "Allow All"
+        AllowSelected = "Allow Selected"
+        RejectSelected = "Reject Selected"
+        ManageAccessControlTitle = "Manage Access Control"
+        ManageAccessControlSummary = "Configure access control rules for apps and domains"
+    }
+    
+    RestartService = {
+        Title = "Restart Service to Apply"
+        Summary = "Service is running, restart required to apply new configuration"
+    }
+    
+    Error = {
+        VpnDenied = "VPN permission denied"
+    }
+}
