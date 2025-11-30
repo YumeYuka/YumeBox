@@ -89,5 +89,3 @@ key.password=<key password>
 * [SubCase](https://github.com/sion-codin/SubCase)
 * [Yacd-meta](https://github.com/MetaCubeX/Yacd-meta)
 * [Zashboard](https://github.com/Zephyruso/zashboard)
-
-```

@@ -2,7 +2,7 @@
 
 **简体中文** | [简体中文](README_ZH.md) | [English](../README.md)
 
-<img src="./docs/Logo.png" style="width: 96px;" alt="logo">
+<img src="Logo.png" style="width: 96px;" alt="logo">
 
 ## YumeBox
 
